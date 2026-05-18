@@ -303,5 +303,13 @@
 			"type":	"string",
 			"name":	"shape_tools",
 			"id":	"0x0100004B"
+		}, {
+			"type":	"string",
+			"name":	"rgb_slider",
+			"id":	"0x0100004C"
+		}, {
+			"type":	"string",
+			"name":	"color_grid",
+			"id":	"0x0100004D"
 		}]
 }

@@ -28,6 +28,7 @@ export struct myPaintSheet {
   @Link percent: string;
   @Link color: string;
   @Link strokeWidth: number;
+  @State colorMode: number = 0;
   @State redValue: number = 0;
   @State greenValue: number = 0;
   @State blueValue: number = 0;
@@ -188,133 +189,176 @@ export struct myPaintSheet {
       .margin({ bottom: $r('app.float.title_bottom') })
 
       Column() {
-        Text($r('app.string.color'))
-          .textAlign(TextAlign.Start)
-          .fontSize($r('app.float.font_size'))
-          .fontColor($r('sys.color.mask_secondary'))
-          .margin({ bottom: $r('app.float.margin_bottom') })
         Row() {
-          ForEach(CommonConstants.COLOR_ARR, (item: string) => {
-            Stack() {
-              Text()
-                .width($r('app.float.image_width'))
-                .height($r('app.float.image_width'))
-                .borderRadius($r('app.float.border_radius_m'))
-                .backgroundColor(item)
-              if (this.color === item) {
-                Text()
-                  .width($r('app.float.image_width'))
-                  .height($r('app.float.image_width'))
-                  .borderRadius($r('app.float.border_radius_m'))
-                  .borderWidth(2.5)
-                  .borderColor($r('app.color.theme_color'))
-              }
-            }
-            .width($r('app.float.image_width'))
-            .height($r('app.float.image_width'))
+          Text($r('app.string.color'))
+            .fontSize($r('app.float.font_size'))
+            .fontColor($r('sys.color.mask_secondary'))
+          Text(this.colorMode === 0 ? $r('app.string.color_grid') : $r('app.string.rgb_slider'))
+            .fontSize(12)
+            .fontColor($r('app.color.theme_color'))
+            .margin({ left: 12 })
             .onClick(() => {
-              this.color = item;
-              this.syncRgbFromColor();
-              this.ToggleThicknessColor();
+              this.colorMode = (this.colorMode + 1) % 2;
             })
-          }, (item: string) => JSON.stringify(item))
         }
-        .padding({
-          left: $r('app.float.margin_top'),
-          right: $r('app.float.margin_top')
-        })
-        .justifyContent(FlexAlign.SpaceBetween)
-        .width(CommonConstants.ONE_HUNDRED_PERCENT)
-        Column() {
-          Row() {
-            Text('R')
-              .fontSize(12)
-              .fontColor('#E90808')
-              .width(16)
-              .textAlign(TextAlign.Center)
-            Slider({ value: this.redValue, min: 0, max: 255 })
-              .width($r('app.float.slider_width'))
-              .selectedColor('#E90808')
-              .trackColor(Color.Black)
-              .blockColor('#E90808')
-              .minResponsiveDistance(CommonConstants.ONE)
-              .onChange((value: number) => {
-                this.redValue = value;
-                this.updateColorFromRgb();
-                this.ToggleThicknessColor();
-              })
-            Text(Math.round(this.redValue).toString())
-              .fontSize(11)
-              .fontColor($r('sys.color.mask_secondary'))
-              .width(28)
-              .textAlign(TextAlign.Center)
-          }
-          .width(CommonConstants.ONE_HUNDRED_PERCENT)
-          .justifyContent(FlexAlign.SpaceBetween)
-          .alignItems(VerticalAlign.Center)
+        .margin({ bottom: $r('app.float.margin_bottom') })
 
-          Row() {
-            Text('G')
-              .fontSize(12)
-              .fontColor('#63B959')
-              .width(16)
-              .textAlign(TextAlign.Center)
-            Slider({ value: this.greenValue, min: 0, max: 255 })
-              .width($r('app.float.slider_width'))
-              .selectedColor('#63B959')
-              .trackColor(Color.Black)
-              .blockColor('#63B959')
-              .minResponsiveDistance(CommonConstants.ONE)
-              .onChange((value: number) => {
-                this.greenValue = value;
-                this.updateColorFromRgb();
-                this.ToggleThicknessColor();
-              })
-            Text(Math.round(this.greenValue).toString())
-              .fontSize(11)
-              .fontColor($r('sys.color.mask_secondary'))
-              .width(28)
-              .textAlign(TextAlign.Center)
-          }
-          .width(CommonConstants.ONE_HUNDRED_PERCENT)
-          .justifyContent(FlexAlign.SpaceBetween)
-          .alignItems(VerticalAlign.Center)
-          .margin({ top: 4 })
+        if (this.colorMode === 0) {
+          Column() {
+            Row() {
+              ForEach(CommonConstants.COLOR_GRAY_ROW, (item: string) => {
+                Stack() {
+                  Text()
+                    .width(26)
+                    .height(20)
+                    .backgroundColor(item)
+                  if (this.color === item) {
+                    Text()
+                      .width(26)
+                      .height(20)
+                      .borderWidth(2)
+                      .borderColor(Color.White)
+                  }
+                }
+                .width(26)
+                .height(20)
+                .onClick(() => {
+                  this.color = item;
+                  this.syncRgbFromColor();
+                  this.ToggleThicknessColor();
+                })
+              }, (item: string, index: number) => `gray_${index}`)
+            }
+            .width(CommonConstants.ONE_HUNDRED_PERCENT)
+            .justifyContent(FlexAlign.SpaceEvenly)
 
-          Row() {
-            Text('B')
-              .fontSize(12)
-              .fontColor('#0A59F7')
-              .width(16)
-              .textAlign(TextAlign.Center)
-            Slider({ value: this.blueValue, min: 0, max: 255 })
-              .width($r('app.float.slider_width'))
-              .selectedColor('#0A59F7')
-              .trackColor(Color.Black)
-              .blockColor('#0A59F7')
-              .minResponsiveDistance(CommonConstants.ONE)
-              .onChange((value: number) => {
-                this.blueValue = value;
-                this.updateColorFromRgb();
-                this.ToggleThicknessColor();
-              })
-            Text(Math.round(this.blueValue).toString())
-              .fontSize(11)
-              .fontColor($r('sys.color.mask_secondary'))
-              .width(28)
-              .textAlign(TextAlign.Center)
+            ForEach(CommonConstants.COLOR_GRID, (row: string[], rowIndex: number) => {
+              Row() {
+                ForEach(row, (item: string, colIndex: number) => {
+                  Stack() {
+                    Text()
+                      .width(26)
+                      .height(20)
+                      .backgroundColor(item)
+                    if (this.color === item) {
+                      Text()
+                        .width(26)
+                        .height(20)
+                        .borderWidth(2)
+                        .borderColor(Color.White)
+                    }
+                  }
+                  .width(26)
+                  .height(20)
+                  .onClick(() => {
+                    this.color = item;
+                    this.syncRgbFromColor();
+                    this.ToggleThicknessColor();
+                  })
+                }, (item: string, colIndex: number) => `grid_${rowIndex}_${colIndex}`)
+              }
+              .width(CommonConstants.ONE_HUNDRED_PERCENT)
+              .justifyContent(FlexAlign.SpaceEvenly)
+              .margin({ top: 1 })
+            }, (row: string[], rowIndex: number) => `row_${rowIndex}`)
+          }
+          .padding({
+            left: $r('app.float.margin_top'),
+            right: $r('app.float.margin_top')
+          })
+          .width(CommonConstants.ONE_HUNDRED_PERCENT)
+        } else {
+          Column() {
+            Row() {
+              Text('R')
+                .fontSize(12)
+                .fontColor('#E90808')
+                .width(16)
+                .textAlign(TextAlign.Center)
+              Slider({ value: this.redValue, min: 0, max: 255 })
+                .width($r('app.float.slider_width'))
+                .selectedColor('#E90808')
+                .trackColor(Color.Black)
+                .blockColor('#E90808')
+                .minResponsiveDistance(CommonConstants.ONE)
+                .onChange((value: number) => {
+                  this.redValue = value;
+                  this.updateColorFromRgb();
+                  this.ToggleThicknessColor();
+                })
+              Text(Math.round(this.redValue).toString())
+                .fontSize(11)
+                .fontColor($r('sys.color.mask_secondary'))
+                .width(28)
+                .textAlign(TextAlign.Center)
+            }
+            .width(CommonConstants.ONE_HUNDRED_PERCENT)
+            .justifyContent(FlexAlign.SpaceBetween)
+            .alignItems(VerticalAlign.Center)
+
+            Row() {
+              Text('G')
+                .fontSize(12)
+                .fontColor('#63B959')
+                .width(16)
+                .textAlign(TextAlign.Center)
+              Slider({ value: this.greenValue, min: 0, max: 255 })
+                .width($r('app.float.slider_width'))
+                .selectedColor('#63B959')
+                .trackColor(Color.Black)
+                .blockColor('#63B959')
+                .minResponsiveDistance(CommonConstants.ONE)
+                .onChange((value: number) => {
+                  this.greenValue = value;
+                  this.updateColorFromRgb();
+                  this.ToggleThicknessColor();
+                })
+              Text(Math.round(this.greenValue).toString())
+                .fontSize(11)
+                .fontColor($r('sys.color.mask_secondary'))
+                .width(28)
+                .textAlign(TextAlign.Center)
+            }
+            .width(CommonConstants.ONE_HUNDRED_PERCENT)
+            .justifyContent(FlexAlign.SpaceBetween)
+            .alignItems(VerticalAlign.Center)
+            .margin({ top: 4 })
+
+            Row() {
+              Text('B')
+                .fontSize(12)
+                .fontColor('#0A59F7')
+                .width(16)
+                .textAlign(TextAlign.Center)
+              Slider({ value: this.blueValue, min: 0, max: 255 })
+                .width($r('app.float.slider_width'))
+                .selectedColor('#0A59F7')
+                .trackColor(Color.Black)
+                .blockColor('#0A59F7')
+                .minResponsiveDistance(CommonConstants.ONE)
+                .onChange((value: number) => {
+                  this.blueValue = value;
+                  this.updateColorFromRgb();
+                  this.ToggleThicknessColor();
+                })
+              Text(Math.round(this.blueValue).toString())
+                .fontSize(11)
+                .fontColor($r('sys.color.mask_secondary'))
+                .width(28)
+                .textAlign(TextAlign.Center)
+            }
+            .width(CommonConstants.ONE_HUNDRED_PERCENT)
+            .justifyContent(FlexAlign.SpaceBetween)
+            .alignItems(VerticalAlign.Center)
+            .margin({ top: 4 })
           }
           .width(CommonConstants.ONE_HUNDRED_PERCENT)
-          .justifyContent(FlexAlign.SpaceBetween)
-          .alignItems(VerticalAlign.Center)
-          .margin({ top: 4 })
+          .padding({
+            left: $r('app.float.margin_top'),
+            right: $r('app.float.margin_top')
+          })
         }
-        .width(CommonConstants.ONE_HUNDRED_PERCENT)
-        .padding({
-          left: $r('app.float.margin_top'),
-          right: $r('app.float.margin_top')
-        })
-        .margin({ top: 8 })
+
         Row() {
           Text($r('app.string.current_color'))
             .fontSize(12)

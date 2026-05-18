@@ -61,6 +61,11 @@ struct DrawCanvas {
   private offCanvasReady: boolean = false;
   private shapeStartX: number = 0;
   private shapeStartY: number = 0;
+  private compassCenterFixed: boolean = false;
+  private compassCenterX: number = 0;
+  private compassCenterY: number = 0;
+  private compassStartAngle: number = 0;
+  private compassDrawing: boolean = false;
 
   aboutToAppear(): void {
     this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
@@ -303,10 +308,104 @@ struct DrawCanvas {
         .height(CommonConstants.CANVAS_WIDTH)
         .onTouch((event: TouchEvent) => {
           this.clean = false;
-          if (this.index === 1 || event.touches.length > 1) {
+          if (this.index === 1) {
             return;
           }
           if (this.shapeTool !== '') {
+            if (this.shapeTool === 'circle') {
+              if (event.type === TouchType.Down && event.touches.length > 0) {
+                let touch = event.touches[0];
+                if (!this.compassCenterFixed) {
+                  this.compassCenterX = touch.x;
+                  this.compassCenterY = touch.y;
+                  this.compassCenterFixed = true;
+                  this.compassDrawing = false;
+                } else {
+                  let dx = touch.x - this.compassCenterX;
+                  let dy = touch.y - this.compassCenterY;
+                  this.compassStartAngle = Math.atan2(dy, dx);
+                  this.compassDrawing = true;
+                }
+              }
+              if (event.type === TouchType.Move && event.touches.length > 0) {
+                let touch = event.touches[0];
+                if (this.compassDrawing) {
+                  this.clearTopCanvas();
+                  let ctx = this.context;
+                  let dx = touch.x - this.compassCenterX;
+                  let dy = touch.y - this.compassCenterY;
+                  let radius = Math.sqrt(dx * dx + dy * dy);
+                  let currentAngle = Math.atan2(dy, dx);
+                  ctx.lineWidth = this.mPaint.lineWidth;
+                  ctx.strokeStyle = this.mPaint.StrokeStyle;
+                  ctx.globalAlpha = this.mPaint.globalAlpha;
+                  ctx.lineCap = 'round';
+                  ctx.beginPath();
+                  ctx.arc(this.compassCenterX, this.compassCenterY, radius, this.compassStartAngle, currentAngle);
+                  ctx.stroke();
+                  ctx.beginPath();
+                  ctx.arc(this.compassCenterX, this.compassCenterY, 5, 0, 2 * Math.PI);
+                  ctx.fillStyle = this.mPaint.StrokeStyle;
+                  ctx.fill();
+                } else if (this.compassCenterFixed) {
+                  this.compassDrawing = true;
+                  this.compassStartAngle = 0;
+                  this.clearTopCanvas();
+                  let ctx = this.context;
+                  let dx = touch.x - this.compassCenterX;
+                  let dy = touch.y - this.compassCenterY;
+                  let radius = Math.sqrt(dx * dx + dy * dy);
+                  ctx.lineWidth = this.mPaint.lineWidth;
+                  ctx.strokeStyle = this.mPaint.StrokeStyle;
+                  ctx.globalAlpha = this.mPaint.globalAlpha;
+                  ctx.lineCap = 'round';
+                  ctx.beginPath();
+                  ctx.arc(this.compassCenterX, this.compassCenterY, radius, 0, 2 * Math.PI);
+                  ctx.stroke();
+                }
+              }
+              if (event.type === TouchType.Up && event.touches.length > 0) {
+                let touch = event.touches[0];
+                if (this.compassDrawing) {
+                  let dx = touch.x - this.compassCenterX;
+                  let dy = touch.y - this.compassCenterY;
+                  let radius = Math.sqrt(dx * dx + dy * dy);
+                  if (radius < 1) {
+                    this.compassDrawing = false;
+                    this.compassCenterFixed = false;
+                    this.clearTopCanvas();
+                    return;
+                  }
+                  let endAngle = Math.atan2(dy, dx);
+                  let shape: ShapeDraw;
+                  if (this.compassStartAngle === 0) {
+                    shape = new ShapeDraw(this.mPaint, 'circle',
+                      this.compassCenterX, this.compassCenterY, touch.x, touch.y,
+                      0, 2 * Math.PI);
+                  } else {
+                    shape = new ShapeDraw(this.mPaint, 'circle',
+                      this.compassCenterX, this.compassCenterY, touch.x, touch.y,
+                      this.compassStartAngle, endAngle);
+                  }
+                  this.add(shape);
+                  this.appendToOffCanvas(shape);
+                  this.clearTopCanvas();
+                  this.compassDrawing = false;
+                  this.compassCenterFixed = false;
+                  this.redoDraw = false;
+                  this.unDoDraw = true;
+                } else {
+                  this.compassCenterFixed = true;
+                  let ctx = this.context;
+                  ctx.beginPath();
+                  ctx.arc(this.compassCenterX, this.compassCenterY, 5, 0, 2 * Math.PI);
+                  ctx.fillStyle = this.mPaint.StrokeStyle;
+                  ctx.globalAlpha = this.mPaint.globalAlpha;
+                  ctx.fill();
+                }
+              }
+              return;
+            }
             if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Down) {
               this.shapeStartX = event.touches[0].x;
               this.shapeStartY = event.touches[0].y;
@@ -326,6 +425,9 @@ struct DrawCanvas {
             return;
           }
           this.arr.push(event.touches[0].x + event.touches[0].y);
+          if (event.touches.length > 1) {
+            return;
+          }
           if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Down) {
             this.mPath = new DrawPath(this.mPaint, this.path2Db);
             this.mPath.paint = this.mPaint;

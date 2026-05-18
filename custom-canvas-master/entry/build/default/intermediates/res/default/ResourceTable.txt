@@ -5,6 +5,7 @@ string ballpoint 0x01000004
 string brash 0x01000005
 string clear 0x01000006
 string color 0x01000007
+string color_grid 0x0100004d
 string compass 0x01000048
 string current_color 0x01000047
 string fountain_pen 0x01000008
@@ -16,6 +17,7 @@ string paint 0x0100000d
 string pencil 0x0100000e
 string rect_tool 0x01000049
 string redo 0x0100000f
+string rgb_slider 0x0100004c
 string rubber 0x01000010
 string ruler 0x0100004a
 string shape_tools 0x0100004b

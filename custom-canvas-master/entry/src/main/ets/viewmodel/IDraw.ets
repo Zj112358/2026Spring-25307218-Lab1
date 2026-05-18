@@ -120,8 +120,11 @@ export class ShapeDraw extends DrawPath {
   public startY: number;
   public endX: number;
   public endY: number;
+  public startAngle: number = 0;
+  public endAngle: number = 2 * Math.PI;
 
-  constructor(paint: Paint, shapeType: string, startX: number, startY: number, endX: number, endY: number) {
+  constructor(paint: Paint, shapeType: string, startX: number, startY: number, endX: number, endY: number,
+    startAngle?: number, endAngle?: number) {
     super(paint, new Path2D());
     this.shapeType = shapeType;
     this.startX = startX;
@@ -130,6 +133,12 @@ export class ShapeDraw extends DrawPath {
     this.endY = endY;
     this.isFountainPen = false;
     this.fountainPenPoints = [];
+    if (startAngle !== undefined) {
+      this.startAngle = startAngle;
+    }
+    if (endAngle !== undefined) {
+      this.endAngle = endAngle;
+    }
   }
 
   draw(context: CanvasRenderingContext2D): void {
@@ -149,7 +158,7 @@ export class ShapeDraw extends DrawPath {
       let dy = this.endY - this.startY;
       let radius = Math.sqrt(dx * dx + dy * dy);
       context.beginPath();
-      context.arc(this.startX, this.startY, radius, 0, 2 * Math.PI);
+      context.arc(this.startX, this.startY, radius, this.startAngle, this.endAngle);
       context.stroke();
     } else if (this.shapeType === 'rect') {
       let x = Math.min(this.startX, this.endX);

@@ -87,6 +87,14 @@
     {
       "name": "shape_tools",
       "value": "作图工具"
+    },
+    {
+      "name": "color_grid",
+      "value": "网格选色"
+    },
+    {
+      "name": "rgb_slider",
+      "value": "RGB滑块"
     }
   ]
 }

@@ -87,6 +87,14 @@
     {
       "name": "shape_tools",
       "value": "shapes"
+    },
+    {
+      "name": "color_grid",
+      "value": "Color Grid"
+    },
+    {
+      "name": "rgb_slider",
+      "value": "RGB Slider"
     }
   ]
 }
