@@ -17,299 +17,367 @@
 			"id":	"0x01000003"
 		}, {
 			"type":	"string",
-			"name":	"ballpoint",
+			"name":	"arrow_tool",
 			"id":	"0x01000004"
 		}, {
 			"type":	"string",
-			"name":	"brash",
+			"name":	"ballpoint",
 			"id":	"0x01000005"
 		}, {
 			"type":	"string",
-			"name":	"clear",
+			"name":	"brash",
 			"id":	"0x01000006"
 		}, {
 			"type":	"string",
-			"name":	"color",
+			"name":	"circle_tool",
 			"id":	"0x01000007"
 		}, {
 			"type":	"string",
-			"name":	"fountain_pen",
+			"name":	"clear",
 			"id":	"0x01000008"
 		}, {
 			"type":	"string",
-			"name":	"laser_pointer",
+			"name":	"color",
 			"id":	"0x01000009"
 		}, {
 			"type":	"string",
-			"name":	"marker",
+			"name":	"color_grid",
 			"id":	"0x0100000A"
 		}, {
 			"type":	"string",
-			"name":	"module_desc",
+			"name":	"cone_tool",
 			"id":	"0x0100000B"
 		}, {
 			"type":	"string",
-			"name":	"opacity",
+			"name":	"cube_tool",
 			"id":	"0x0100000C"
 		}, {
 			"type":	"string",
-			"name":	"paint",
+			"name":	"current_color",
 			"id":	"0x0100000D"
 		}, {
 			"type":	"string",
-			"name":	"pencil",
+			"name":	"cylinder_tool",
 			"id":	"0x0100000E"
 		}, {
 			"type":	"string",
-			"name":	"redo",
+			"name":	"delete_tool",
 			"id":	"0x0100000F"
 		}, {
 			"type":	"string",
-			"name":	"rubber",
+			"name":	"diamond_tool",
 			"id":	"0x01000010"
 		}, {
 			"type":	"string",
-			"name":	"thicknesses",
+			"name":	"ellipse_tool",
 			"id":	"0x01000011"
 		}, {
 			"type":	"string",
-			"name":	"undo",
+			"name":	"font_size_label",
 			"id":	"0x01000012"
 		}, {
-			"type":	"color",
-			"name":	"linear_end",
+			"type":	"string",
+			"name":	"font_style_label",
 			"id":	"0x01000013"
 		}, {
-			"type":	"color",
-			"name":	"linear_start",
+			"type":	"string",
+			"name":	"fountain_pen",
 			"id":	"0x01000014"
 		}, {
-			"type":	"color",
-			"name":	"number_color",
+			"type":	"string",
+			"name":	"marker",
 			"id":	"0x01000015"
 		}, {
-			"type":	"color",
-			"name":	"paint_color",
+			"type":	"string",
+			"name":	"module_desc",
 			"id":	"0x01000016"
 		}, {
-			"type":	"color",
-			"name":	"start_window_background",
+			"type":	"string",
+			"name":	"opacity",
 			"id":	"0x01000017"
 		}, {
-			"type":	"color",
-			"name":	"theme_color",
+			"type":	"string",
+			"name":	"paint",
 			"id":	"0x01000018"
 		}, {
-			"type":	"float",
-			"name":	"back_width",
+			"type":	"string",
+			"name":	"pyramid_tool",
 			"id":	"0x01000019"
-		}, {
-			"type":	"float",
-			"name":	"border_radius",
-			"id":	"0x0100001A"
-		}, {
-			"type":	"float",
-			"name":	"border_radius_m",
-			"id":	"0x0100001B"
-		}, {
-			"type":	"float",
-			"name":	"bottom",
-			"id":	"0x0100001C"
-		}, {
-			"type":	"float",
-			"name":	"brash_height",
-			"id":	"0x0100001D"
-		}, {
-			"type":	"float",
-			"name":	"brash_width",
-			"id":	"0x0100001E"
-		}, {
-			"type":	"float",
-			"name":	"font_size",
-			"id":	"0x0100001F"
-		}, {
-			"type":	"float",
-			"name":	"font_size_l",
-			"id":	"0x01000020"
-		}, {
-			"type":	"float",
-			"name":	"font_size_m",
-			"id":	"0x01000021"
-		}, {
-			"type":	"float",
-			"name":	"height",
-			"id":	"0x01000022"
-		}, {
-			"type":	"float",
-			"name":	"image_width",
-			"id":	"0x01000023"
-		}, {
-			"type":	"float",
-			"name":	"margin_bottom",
-			"id":	"0x01000024"
-		}, {
-			"type":	"float",
-			"name":	"margin_top",
-			"id":	"0x01000025"
-		}, {
-			"type":	"float",
-			"name":	"number",
-			"id":	"0x01000026"
-		}, {
-			"type":	"float",
-			"name":	"padding_left",
-			"id":	"0x01000027"
-		}, {
-			"type":	"float",
-			"name":	"paint_height",
-			"id":	"0x01000028"
-		}, {
-			"type":	"float",
-			"name":	"paint_width",
-			"id":	"0x01000029"
-		}, {
-			"type":	"float",
-			"name":	"slider_width",
-			"id":	"0x0100002A"
-		}, {
-			"type":	"float",
-			"name":	"title_bottom",
-			"id":	"0x0100002B"
-		}, {
-			"type":	"media",
-			"name":	"Ballpoint",
-			"id":	"0x0100002C"
-		}, {
-			"type":	"media",
-			"name":	"Ballpoint_active",
-			"id":	"0x0100002D"
-		}, {
-			"type":	"media",
-			"name":	"add",
-			"id":	"0x0100002E"
-		}, {
-			"type":	"media",
-			"name":	"background",
-			"id":	"0x0100002F"
-		}, {
-			"type":	"media",
-			"name":	"clear",
-			"id":	"0x01000030"
-		}, {
-			"type":	"media",
-			"name":	"clear_active",
-			"id":	"0x01000031"
-		}, {
-			"type":	"media",
-			"name":	"foreground",
-			"id":	"0x01000032"
-		}, {
-			"type":	"media",
-			"name":	"fountain",
-			"id":	"0x01000033"
-		}, {
-			"type":	"media",
-			"name":	"laser",
-			"id":	"0x01000034"
-		}, {
-			"type":	"media",
-			"name":	"layered_image",
-			"id":	"0x01000035"
-		}, {
-			"type":	"media",
-			"name":	"marker",
-			"id":	"0x01000036"
-		}, {
-			"type":	"media",
-			"name":	"marker_active",
-			"id":	"0x01000037"
-		}, {
-			"type":	"media",
-			"name":	"minuses",
-			"id":	"0x01000038"
-		}, {
-			"type":	"media",
-			"name":	"paintbrush",
-			"id":	"0x01000039"
-		}, {
-			"type":	"media",
-			"name":	"paintbrush_active",
-			"id":	"0x0100003A"
-		}, {
-			"type":	"media",
-			"name":	"pencils",
-			"id":	"0x0100003B"
-		}, {
-			"type":	"media",
-			"name":	"recall",
-			"id":	"0x0100003C"
-		}, {
-			"type":	"media",
-			"name":	"recall_active",
-			"id":	"0x0100003D"
-		}, {
-			"type":	"media",
-			"name":	"redo",
-			"id":	"0x0100003E"
-		}, {
-			"type":	"media",
-			"name":	"redo_active",
-			"id":	"0x0100003F"
-		}, {
-			"type":	"media",
-			"name":	"rubbers",
-			"id":	"0x01000040"
-		}, {
-			"type":	"media",
-			"name":	"rubbers_active",
-			"id":	"0x01000041"
-		}, {
-			"type":	"media",
-			"name":	"startIcon",
-			"id":	"0x01000042"
-		}, {
-			"type":	"profile",
-			"name":	"backup_config",
-			"id":	"0x01000043"
-		}, {
-			"type":	"profile",
-			"name":	"main_pages",
-			"id":	"0x01000044"
-		}, {
-			"type":	"media",
-			"name":	"fountain_active",
-			"id":	"0x01000045"
-		}, {
-			"type":	"media",
-			"name":	"pencils_active",
-			"id":	"0x01000046"
-		}, {
-			"type":	"string",
-			"name":	"current_color",
-			"id":	"0x01000047"
-		}, {
-			"type":	"string",
-			"name":	"compass",
-			"id":	"0x01000048"
 		}, {
 			"type":	"string",
 			"name":	"rect_tool",
-			"id":	"0x01000049"
+			"id":	"0x0100001A"
 		}, {
 			"type":	"string",
-			"name":	"ruler",
-			"id":	"0x0100004A"
-		}, {
-			"type":	"string",
-			"name":	"shape_tools",
-			"id":	"0x0100004B"
+			"name":	"redo",
+			"id":	"0x0100001B"
 		}, {
 			"type":	"string",
 			"name":	"rgb_slider",
-			"id":	"0x0100004C"
+			"id":	"0x0100001C"
 		}, {
 			"type":	"string",
-			"name":	"color_grid",
+			"name":	"rotate_tool",
+			"id":	"0x0100001D"
+		}, {
+			"type":	"string",
+			"name":	"rubber",
+			"id":	"0x0100001E"
+		}, {
+			"type":	"string",
+			"name":	"ruler",
+			"id":	"0x0100001F"
+		}, {
+			"type":	"string",
+			"name":	"select_tool",
+			"id":	"0x01000020"
+		}, {
+			"type":	"string",
+			"name":	"shape_tools",
+			"id":	"0x01000021"
+		}, {
+			"type":	"string",
+			"name":	"sphere_tool",
+			"id":	"0x01000022"
+		}, {
+			"type":	"string",
+			"name":	"star_tool",
+			"id":	"0x01000023"
+		}, {
+			"type":	"string",
+			"name":	"text_tool",
+			"id":	"0x01000024"
+		}, {
+			"type":	"string",
+			"name":	"thicknesses",
+			"id":	"0x01000025"
+		}, {
+			"type":	"string",
+			"name":	"triangle_tool",
+			"id":	"0x01000026"
+		}, {
+			"type":	"string",
+			"name":	"undo",
+			"id":	"0x01000027"
+		}, {
+			"type":	"color",
+			"name":	"linear_end",
+			"id":	"0x01000028"
+		}, {
+			"type":	"color",
+			"name":	"linear_start",
+			"id":	"0x01000029"
+		}, {
+			"type":	"color",
+			"name":	"number_color",
+			"id":	"0x0100002A"
+		}, {
+			"type":	"color",
+			"name":	"paint_color",
+			"id":	"0x0100002B"
+		}, {
+			"type":	"color",
+			"name":	"start_window_background",
+			"id":	"0x0100002C"
+		}, {
+			"type":	"color",
+			"name":	"theme_color",
+			"id":	"0x0100002D"
+		}, {
+			"type":	"float",
+			"name":	"back_width",
+			"id":	"0x0100002E"
+		}, {
+			"type":	"float",
+			"name":	"border_radius",
+			"id":	"0x0100002F"
+		}, {
+			"type":	"float",
+			"name":	"border_radius_m",
+			"id":	"0x01000030"
+		}, {
+			"type":	"float",
+			"name":	"bottom",
+			"id":	"0x01000031"
+		}, {
+			"type":	"float",
+			"name":	"brash_height",
+			"id":	"0x01000032"
+		}, {
+			"type":	"float",
+			"name":	"brash_width",
+			"id":	"0x01000033"
+		}, {
+			"type":	"float",
+			"name":	"font_size",
+			"id":	"0x01000034"
+		}, {
+			"type":	"float",
+			"name":	"font_size_l",
+			"id":	"0x01000035"
+		}, {
+			"type":	"float",
+			"name":	"font_size_m",
+			"id":	"0x01000036"
+		}, {
+			"type":	"float",
+			"name":	"height",
+			"id":	"0x01000037"
+		}, {
+			"type":	"float",
+			"name":	"image_width",
+			"id":	"0x01000038"
+		}, {
+			"type":	"float",
+			"name":	"margin_bottom",
+			"id":	"0x01000039"
+		}, {
+			"type":	"float",
+			"name":	"margin_top",
+			"id":	"0x0100003A"
+		}, {
+			"type":	"float",
+			"name":	"number",
+			"id":	"0x0100003B"
+		}, {
+			"type":	"float",
+			"name":	"padding_left",
+			"id":	"0x0100003C"
+		}, {
+			"type":	"float",
+			"name":	"paint_height",
+			"id":	"0x0100003D"
+		}, {
+			"type":	"float",
+			"name":	"paint_width",
+			"id":	"0x0100003E"
+		}, {
+			"type":	"float",
+			"name":	"slider_width",
+			"id":	"0x0100003F"
+		}, {
+			"type":	"float",
+			"name":	"title_bottom",
+			"id":	"0x01000040"
+		}, {
+			"type":	"media",
+			"name":	"Ballpoint",
+			"id":	"0x01000041"
+		}, {
+			"type":	"media",
+			"name":	"Ballpoint_active",
+			"id":	"0x01000042"
+		}, {
+			"type":	"media",
+			"name":	"add",
+			"id":	"0x01000043"
+		}, {
+			"type":	"media",
+			"name":	"background",
+			"id":	"0x01000044"
+		}, {
+			"type":	"media",
+			"name":	"clear",
+			"id":	"0x01000045"
+		}, {
+			"type":	"media",
+			"name":	"clear_active",
+			"id":	"0x01000046"
+		}, {
+			"type":	"media",
+			"name":	"cone",
+			"id":	"0x01000047"
+		}, {
+			"type":	"media",
+			"name":	"cube",
+			"id":	"0x01000048"
+		}, {
+			"type":	"media",
+			"name":	"cylinder",
+			"id":	"0x01000049"
+		}, {
+			"type":	"media",
+			"name":	"foreground",
+			"id":	"0x0100004A"
+		}, {
+			"type":	"media",
+			"name":	"fountain",
+			"id":	"0x0100004B"
+		}, {
+			"type":	"media",
+			"name":	"fountain_active",
+			"id":	"0x0100004C"
+		}, {
+			"type":	"media",
+			"name":	"laser",
 			"id":	"0x0100004D"
+		}, {
+			"type":	"media",
+			"name":	"layered_image",
+			"id":	"0x0100004E"
+		}, {
+			"type":	"media",
+			"name":	"marker",
+			"id":	"0x0100004F"
+		}, {
+			"type":	"media",
+			"name":	"marker_active",
+			"id":	"0x01000050"
+		}, {
+			"type":	"media",
+			"name":	"minuses",
+			"id":	"0x01000051"
+		}, {
+			"type":	"media",
+			"name":	"paintbrush",
+			"id":	"0x01000052"
+		}, {
+			"type":	"media",
+			"name":	"paintbrush_active",
+			"id":	"0x01000053"
+		}, {
+			"type":	"media",
+			"name":	"pyramid",
+			"id":	"0x01000054"
+		}, {
+			"type":	"media",
+			"name":	"recall",
+			"id":	"0x01000055"
+		}, {
+			"type":	"media",
+			"name":	"recall_active",
+			"id":	"0x01000056"
+		}, {
+			"type":	"media",
+			"name":	"redo",
+			"id":	"0x01000057"
+		}, {
+			"type":	"media",
+			"name":	"redo_active",
+			"id":	"0x01000058"
+		}, {
+			"type":	"media",
+			"name":	"rubbers",
+			"id":	"0x01000059"
+		}, {
+			"type":	"media",
+			"name":	"rubbers_active",
+			"id":	"0x0100005A"
+		}, {
+			"type":	"media",
+			"name":	"sphere",
+			"id":	"0x0100005B"
+		}, {
+			"type":	"media",
+			"name":	"startIcon",
+			"id":	"0x0100005C"
+		}, {
+			"type":	"profile",
+			"name":	"backup_config",
+			"id":	"0x0100005D"
+		}, {
+			"type":	"profile",
+			"name":	"main_pages",
+			"id":	"0x0100005E"
 		}]
 }

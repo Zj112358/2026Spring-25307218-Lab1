@@ -22,6 +22,28 @@ interface DrawCanvas_Params {
     index?: number;
     clean?: boolean;
     percent?: string;
+    eraserWidth?: number;
+    isEraserShow?: boolean;
+    isEraser?: boolean;
+    selectedIndex?: number;
+    selectDragStartX?: number;
+    selectDragStartY?: number;
+    selectAction?: string;
+    showShapeMenu?: boolean;
+    shapeMenuX?: number;
+    shapeMenuY?: number;
+    isTextShow?: boolean;
+    textContent?: string;
+    textFontSize?: number;
+    textFontWeight?: FontWeight;
+    textFontStyle?: FontStyle;
+    textColor?: string;
+    textPlaceX?: number;
+    textPlaceY?: number;
+    isTextEdit?: boolean;
+    lastTextClickTime?: number;
+    lastTextClickX?: number;
+    lastTextClickY?: number;
     mPaint?: Paint;
     mBrush?: IBrush;
     setting?: RenderingContextSettings;
@@ -35,21 +57,17 @@ interface DrawCanvas_Params {
     offCanvasReady?: boolean;
     shapeStartX?: number;
     shapeStartY?: number;
-    compassCenterFixed?: boolean;
-    compassCenterX?: number;
-    compassCenterY?: number;
-    compassStartAngle?: number;
-    compassDrawing?: boolean;
 }
 import display from "@ohos:display";
 import DrawInvoker from "@bundle:com.example.customcanvas/entry/ets/viewmodel/DrawInvoker";
-import DrawPath, { ShapeDraw } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IDraw";
+import DrawPath, { ShapeDraw, TextDraw } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IDraw";
 import type { IBrush } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
 import NormalBrush from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
 import { FountainPenBrush } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
 import Paint from "@bundle:com.example.customcanvas/entry/ets/viewmodel/Paint";
 import { CommonConstants } from "@bundle:com.example.customcanvas/entry/ets/common/CommonConstants";
 import { myPaintSheet } from "@bundle:com.example.customcanvas/entry/ets/view/myPaintSheet";
+import { textInputSheet } from "@bundle:com.example.customcanvas/entry/ets/view/textInputSheet";
 import hilog from "@ohos:hilog";
 import type { BusinessError } from "@ohos:base";
 class DrawCanvas extends ViewPU {
@@ -61,7 +79,7 @@ class DrawCanvas extends ViewPU {
         this.__isDrawing = new ObservedPropertySimplePU(false, this, "isDrawing");
         this.__unDoDraw = new ObservedPropertySimplePU(false, this, "unDoDraw");
         this.__redoDraw = new ObservedPropertySimplePU(false, this, "redoDraw");
-        this.__isPaint = new ObservedPropertySimplePU(true, this, "isPaint");
+        this.__isPaint = new ObservedPropertySimplePU(false, this, "isPaint");
         this.__isShow = new ObservedPropertySimplePU(false, this, "isShow");
         this.__isShapeShow = new ObservedPropertySimplePU(false, this, "isShapeShow");
         this.__isMarker = new ObservedPropertySimplePU(false, this, "isMarker");
@@ -78,6 +96,28 @@ class DrawCanvas extends ViewPU {
         this.__index = new ObservedPropertySimplePU(-1, this, "index");
         this.__clean = new ObservedPropertySimplePU(false, this, "clean");
         this.__percent = new ObservedPropertySimplePU('100', this, "percent");
+        this.__eraserWidth = new ObservedPropertySimplePU(10, this, "eraserWidth");
+        this.__isEraserShow = new ObservedPropertySimplePU(false, this, "isEraserShow");
+        this.__isEraser = new ObservedPropertySimplePU(false, this, "isEraser");
+        this.__selectedIndex = new ObservedPropertySimplePU(-1, this, "selectedIndex");
+        this.__selectDragStartX = new ObservedPropertySimplePU(0, this, "selectDragStartX");
+        this.__selectDragStartY = new ObservedPropertySimplePU(0, this, "selectDragStartY");
+        this.__selectAction = new ObservedPropertySimplePU('', this, "selectAction");
+        this.__showShapeMenu = new ObservedPropertySimplePU(false, this, "showShapeMenu");
+        this.__shapeMenuX = new ObservedPropertySimplePU(0, this, "shapeMenuX");
+        this.__shapeMenuY = new ObservedPropertySimplePU(0, this, "shapeMenuY");
+        this.__isTextShow = new ObservedPropertySimplePU(false, this, "isTextShow");
+        this.__textContent = new ObservedPropertySimplePU('', this, "textContent");
+        this.__textFontSize = new ObservedPropertySimplePU(24, this, "textFontSize");
+        this.__textFontWeight = new ObservedPropertySimplePU(FontWeight.Normal, this, "textFontWeight");
+        this.__textFontStyle = new ObservedPropertySimplePU(FontStyle.Normal, this, "textFontStyle");
+        this.__textColor = new ObservedPropertySimplePU('#000000', this, "textColor");
+        this.textPlaceX = 0;
+        this.textPlaceY = 0;
+        this.isTextEdit = false;
+        this.lastTextClickTime = 0;
+        this.lastTextClickX = 0;
+        this.lastTextClickY = 0;
         this.__mPaint = new ObservedPropertyObjectPU(new Paint(0, '', 1), this, "mPaint");
         this.addProvidedVar("mPaint", this.__mPaint, false);
         this.__mBrush = new ObservedPropertyObjectPU(new NormalBrush(), this, "mBrush");
@@ -93,11 +133,6 @@ class DrawCanvas extends ViewPU {
         this.offCanvasReady = false;
         this.shapeStartX = 0;
         this.shapeStartY = 0;
-        this.compassCenterFixed = false;
-        this.compassCenterX = 0;
-        this.compassCenterY = 0;
-        this.compassStartAngle = 0;
-        this.compassDrawing = false;
         this.setInitiallyProvidedValue(params);
         this.declareWatch("isDrawing", this.createDraw);
         this.finalizeConstruction();
@@ -163,6 +198,72 @@ class DrawCanvas extends ViewPU {
         if (params.percent !== undefined) {
             this.percent = params.percent;
         }
+        if (params.eraserWidth !== undefined) {
+            this.eraserWidth = params.eraserWidth;
+        }
+        if (params.isEraserShow !== undefined) {
+            this.isEraserShow = params.isEraserShow;
+        }
+        if (params.isEraser !== undefined) {
+            this.isEraser = params.isEraser;
+        }
+        if (params.selectedIndex !== undefined) {
+            this.selectedIndex = params.selectedIndex;
+        }
+        if (params.selectDragStartX !== undefined) {
+            this.selectDragStartX = params.selectDragStartX;
+        }
+        if (params.selectDragStartY !== undefined) {
+            this.selectDragStartY = params.selectDragStartY;
+        }
+        if (params.selectAction !== undefined) {
+            this.selectAction = params.selectAction;
+        }
+        if (params.showShapeMenu !== undefined) {
+            this.showShapeMenu = params.showShapeMenu;
+        }
+        if (params.shapeMenuX !== undefined) {
+            this.shapeMenuX = params.shapeMenuX;
+        }
+        if (params.shapeMenuY !== undefined) {
+            this.shapeMenuY = params.shapeMenuY;
+        }
+        if (params.isTextShow !== undefined) {
+            this.isTextShow = params.isTextShow;
+        }
+        if (params.textContent !== undefined) {
+            this.textContent = params.textContent;
+        }
+        if (params.textFontSize !== undefined) {
+            this.textFontSize = params.textFontSize;
+        }
+        if (params.textFontWeight !== undefined) {
+            this.textFontWeight = params.textFontWeight;
+        }
+        if (params.textFontStyle !== undefined) {
+            this.textFontStyle = params.textFontStyle;
+        }
+        if (params.textColor !== undefined) {
+            this.textColor = params.textColor;
+        }
+        if (params.textPlaceX !== undefined) {
+            this.textPlaceX = params.textPlaceX;
+        }
+        if (params.textPlaceY !== undefined) {
+            this.textPlaceY = params.textPlaceY;
+        }
+        if (params.isTextEdit !== undefined) {
+            this.isTextEdit = params.isTextEdit;
+        }
+        if (params.lastTextClickTime !== undefined) {
+            this.lastTextClickTime = params.lastTextClickTime;
+        }
+        if (params.lastTextClickX !== undefined) {
+            this.lastTextClickX = params.lastTextClickX;
+        }
+        if (params.lastTextClickY !== undefined) {
+            this.lastTextClickY = params.lastTextClickY;
+        }
         if (params.mPaint !== undefined) {
             this.mPaint = params.mPaint;
         }
@@ -202,21 +303,6 @@ class DrawCanvas extends ViewPU {
         if (params.shapeStartY !== undefined) {
             this.shapeStartY = params.shapeStartY;
         }
-        if (params.compassCenterFixed !== undefined) {
-            this.compassCenterFixed = params.compassCenterFixed;
-        }
-        if (params.compassCenterX !== undefined) {
-            this.compassCenterX = params.compassCenterX;
-        }
-        if (params.compassCenterY !== undefined) {
-            this.compassCenterY = params.compassCenterY;
-        }
-        if (params.compassStartAngle !== undefined) {
-            this.compassStartAngle = params.compassStartAngle;
-        }
-        if (params.compassDrawing !== undefined) {
-            this.compassDrawing = params.compassDrawing;
-        }
     }
     updateStateVars(params: DrawCanvas_Params) {
     }
@@ -241,6 +327,22 @@ class DrawCanvas extends ViewPU {
         this.__index.purgeDependencyOnElmtId(rmElmtId);
         this.__clean.purgeDependencyOnElmtId(rmElmtId);
         this.__percent.purgeDependencyOnElmtId(rmElmtId);
+        this.__eraserWidth.purgeDependencyOnElmtId(rmElmtId);
+        this.__isEraserShow.purgeDependencyOnElmtId(rmElmtId);
+        this.__isEraser.purgeDependencyOnElmtId(rmElmtId);
+        this.__selectedIndex.purgeDependencyOnElmtId(rmElmtId);
+        this.__selectDragStartX.purgeDependencyOnElmtId(rmElmtId);
+        this.__selectDragStartY.purgeDependencyOnElmtId(rmElmtId);
+        this.__selectAction.purgeDependencyOnElmtId(rmElmtId);
+        this.__showShapeMenu.purgeDependencyOnElmtId(rmElmtId);
+        this.__shapeMenuX.purgeDependencyOnElmtId(rmElmtId);
+        this.__shapeMenuY.purgeDependencyOnElmtId(rmElmtId);
+        this.__isTextShow.purgeDependencyOnElmtId(rmElmtId);
+        this.__textContent.purgeDependencyOnElmtId(rmElmtId);
+        this.__textFontSize.purgeDependencyOnElmtId(rmElmtId);
+        this.__textFontWeight.purgeDependencyOnElmtId(rmElmtId);
+        this.__textFontStyle.purgeDependencyOnElmtId(rmElmtId);
+        this.__textColor.purgeDependencyOnElmtId(rmElmtId);
         this.__mPaint.purgeDependencyOnElmtId(rmElmtId);
         this.__mBrush.purgeDependencyOnElmtId(rmElmtId);
     }
@@ -265,6 +367,22 @@ class DrawCanvas extends ViewPU {
         this.__index.aboutToBeDeleted();
         this.__clean.aboutToBeDeleted();
         this.__percent.aboutToBeDeleted();
+        this.__eraserWidth.aboutToBeDeleted();
+        this.__isEraserShow.aboutToBeDeleted();
+        this.__isEraser.aboutToBeDeleted();
+        this.__selectedIndex.aboutToBeDeleted();
+        this.__selectDragStartX.aboutToBeDeleted();
+        this.__selectDragStartY.aboutToBeDeleted();
+        this.__selectAction.aboutToBeDeleted();
+        this.__showShapeMenu.aboutToBeDeleted();
+        this.__shapeMenuX.aboutToBeDeleted();
+        this.__shapeMenuY.aboutToBeDeleted();
+        this.__isTextShow.aboutToBeDeleted();
+        this.__textContent.aboutToBeDeleted();
+        this.__textFontSize.aboutToBeDeleted();
+        this.__textFontWeight.aboutToBeDeleted();
+        this.__textFontStyle.aboutToBeDeleted();
+        this.__textColor.aboutToBeDeleted();
         this.__mPaint.aboutToBeDeleted();
         this.__mBrush.aboutToBeDeleted();
         SubscriberManager.Get().delete(this.id__());
@@ -410,6 +528,124 @@ class DrawCanvas extends ViewPU {
     set percent(newValue: string) {
         this.__percent.set(newValue);
     }
+    private __eraserWidth: ObservedPropertySimplePU<number>;
+    get eraserWidth() {
+        return this.__eraserWidth.get();
+    }
+    set eraserWidth(newValue: number) {
+        this.__eraserWidth.set(newValue);
+    }
+    private __isEraserShow: ObservedPropertySimplePU<boolean>;
+    get isEraserShow() {
+        return this.__isEraserShow.get();
+    }
+    set isEraserShow(newValue: boolean) {
+        this.__isEraserShow.set(newValue);
+    }
+    private __isEraser: ObservedPropertySimplePU<boolean>;
+    get isEraser() {
+        return this.__isEraser.get();
+    }
+    set isEraser(newValue: boolean) {
+        this.__isEraser.set(newValue);
+    }
+    private __selectedIndex: ObservedPropertySimplePU<number>;
+    get selectedIndex() {
+        return this.__selectedIndex.get();
+    }
+    set selectedIndex(newValue: number) {
+        this.__selectedIndex.set(newValue);
+    }
+    private __selectDragStartX: ObservedPropertySimplePU<number>;
+    get selectDragStartX() {
+        return this.__selectDragStartX.get();
+    }
+    set selectDragStartX(newValue: number) {
+        this.__selectDragStartX.set(newValue);
+    }
+    private __selectDragStartY: ObservedPropertySimplePU<number>;
+    get selectDragStartY() {
+        return this.__selectDragStartY.get();
+    }
+    set selectDragStartY(newValue: number) {
+        this.__selectDragStartY.set(newValue);
+    }
+    private __selectAction: ObservedPropertySimplePU<string>;
+    get selectAction() {
+        return this.__selectAction.get();
+    }
+    set selectAction(newValue: string) {
+        this.__selectAction.set(newValue);
+    }
+    private __showShapeMenu: ObservedPropertySimplePU<boolean>;
+    get showShapeMenu() {
+        return this.__showShapeMenu.get();
+    }
+    set showShapeMenu(newValue: boolean) {
+        this.__showShapeMenu.set(newValue);
+    }
+    private __shapeMenuX: ObservedPropertySimplePU<number>;
+    get shapeMenuX() {
+        return this.__shapeMenuX.get();
+    }
+    set shapeMenuX(newValue: number) {
+        this.__shapeMenuX.set(newValue);
+    }
+    private __shapeMenuY: ObservedPropertySimplePU<number>;
+    get shapeMenuY() {
+        return this.__shapeMenuY.get();
+    }
+    set shapeMenuY(newValue: number) {
+        this.__shapeMenuY.set(newValue);
+    }
+    private __isTextShow: ObservedPropertySimplePU<boolean>;
+    get isTextShow() {
+        return this.__isTextShow.get();
+    }
+    set isTextShow(newValue: boolean) {
+        this.__isTextShow.set(newValue);
+    }
+    private __textContent: ObservedPropertySimplePU<string>;
+    get textContent() {
+        return this.__textContent.get();
+    }
+    set textContent(newValue: string) {
+        this.__textContent.set(newValue);
+    }
+    private __textFontSize: ObservedPropertySimplePU<number>;
+    get textFontSize() {
+        return this.__textFontSize.get();
+    }
+    set textFontSize(newValue: number) {
+        this.__textFontSize.set(newValue);
+    }
+    private __textFontWeight: ObservedPropertySimplePU<FontWeight>;
+    get textFontWeight() {
+        return this.__textFontWeight.get();
+    }
+    set textFontWeight(newValue: FontWeight) {
+        this.__textFontWeight.set(newValue);
+    }
+    private __textFontStyle: ObservedPropertySimplePU<FontStyle>;
+    get textFontStyle() {
+        return this.__textFontStyle.get();
+    }
+    set textFontStyle(newValue: FontStyle) {
+        this.__textFontStyle.set(newValue);
+    }
+    private __textColor: ObservedPropertySimplePU<string>;
+    get textColor() {
+        return this.__textColor.get();
+    }
+    set textColor(newValue: string) {
+        this.__textColor.set(newValue);
+    }
+    private textPlaceX: number;
+    private textPlaceY: number;
+    private isTextEdit: boolean;
+    private lastTextClickTime: number;
+    private lastTextClickX: number;
+    private lastTextClickY: number;
     private __mPaint: ObservedPropertyObjectPU<Paint>;
     get mPaint() {
         return this.__mPaint.get();
@@ -435,11 +671,6 @@ class DrawCanvas extends ViewPU {
     private offCanvasReady: boolean;
     private shapeStartX: number;
     private shapeStartY: number;
-    private compassCenterFixed: boolean;
-    private compassCenterX: number;
-    private compassCenterY: number;
-    private compassStartAngle: number;
-    private compassDrawing: boolean;
     aboutToAppear(): void {
         this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
         this.mPaint.setStrokeWidth(CommonConstants.THREE);
@@ -498,6 +729,140 @@ class DrawCanvas extends ViewPU {
         let shape = new ShapeDraw(this.mPaint, this.shapeTool, this.shapeStartX, this.shapeStartY, x, y);
         shape.draw(this.context);
     }
+    updateShapeMenuPos(): void {
+        if (this.selectedIndex < 0)
+            return;
+        let element = this.drawInvoker.getAt(this.selectedIndex);
+        if (element === null)
+            return;
+        let bounds = element.getBounds();
+        let m = Math.max(element.paint.lineWidth / 2 + 4, 8);
+        this.shapeMenuX = bounds[2] + m;
+        this.shapeMenuY = bounds[1] - m;
+    }
+    drawSelectionBox(): void {
+        if (this.selectedIndex < 0)
+            return;
+        let element = this.drawInvoker.getAt(this.selectedIndex);
+        if (element === null)
+            return;
+        let bounds = element.getBounds();
+        let margin = Math.max(element.paint.lineWidth / 2 + 4, 8);
+        let x = bounds[0] - margin;
+        let y = bounds[1] - margin;
+        let w = bounds[2] - bounds[0] + margin * 2;
+        let h = bounds[3] - bounds[1] + margin * 2;
+        this.clearTopCanvas();
+        let ctx = this.context;
+        ctx.strokeStyle = '#0A59F7';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 3]);
+        ctx.strokeRect(x, y, w, h);
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#0A59F7';
+        let handleSize = 6;
+        ctx.fillRect(x - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
+        ctx.fillRect(x + w - handleSize / 2, y - handleSize / 2, handleSize, handleSize);
+        ctx.fillRect(x - handleSize / 2, y + h - handleSize / 2, handleSize, handleSize);
+        ctx.fillRect(x + w - handleSize / 2, y + h - handleSize / 2, handleSize, handleSize);
+        let cx = x + w / 2;
+        let topY = y;
+        let rotLineLen = 20;
+        let rotHandleY = topY - rotLineLen;
+        ctx.strokeStyle = '#0A59F7';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(cx, topY);
+        ctx.lineTo(cx, rotHandleY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, rotHandleY, 6, 0, 2 * Math.PI);
+        ctx.fillStyle = '#0A59F7';
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, rotHandleY, 4, -Math.PI * 0.75, Math.PI * 0.25);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx + 4 * Math.cos(Math.PI * 0.25), rotHandleY + 4 * Math.sin(Math.PI * 0.25));
+        ctx.lineTo(cx + 4 * Math.cos(Math.PI * 0.25) - 3, rotHandleY + 4 * Math.sin(Math.PI * 0.25) - 2);
+        ctx.stroke();
+        let delR = 11;
+        let delCx = x + w;
+        let delCy = y;
+        ctx.beginPath();
+        ctx.arc(delCx, delCy, delR, 0, 2 * Math.PI);
+        ctx.fillStyle = '#E84026';
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(delCx - 4, delCy - 4);
+        ctx.lineTo(delCx + 4, delCy + 4);
+        ctx.moveTo(delCx + 4, delCy - 4);
+        ctx.lineTo(delCx - 4, delCy + 4);
+        ctx.stroke();
+        this.updateShapeMenuPos();
+    }
+    isRotateHandleHit(tx: number, ty: number): boolean {
+        if (this.selectedIndex < 0)
+            return false;
+        let element = this.drawInvoker.getAt(this.selectedIndex);
+        if (element === null)
+            return false;
+        let bounds = element.getBounds();
+        let margin = Math.max(element.paint.lineWidth / 2 + 4, 8);
+        let cx = (bounds[0] + bounds[2]) / 2;
+        let rotHandleY = bounds[1] - margin - 20;
+        return tx >= cx - 15 && tx <= cx + 15 && ty >= rotHandleY - 15 && ty <= rotHandleY + 15;
+    }
+    isDeleteHandleHit(tx: number, ty: number): boolean {
+        if (this.selectedIndex < 0)
+            return false;
+        let element = this.drawInvoker.getAt(this.selectedIndex);
+        if (element === null)
+            return false;
+        let bounds = element.getBounds();
+        let margin = Math.max(element.paint.lineWidth / 2 + 4, 8);
+        let boxRight = bounds[2] + margin;
+        let boxTop = bounds[1] - margin;
+        return tx >= boxRight - 20 && tx <= boxRight + 20 && ty >= boxTop - 20 && ty <= boxTop + 20;
+    }
+    getSelectionCenter(): number[] {
+        if (this.selectedIndex < 0)
+            return [0, 0];
+        let element = this.drawInvoker.getAt(this.selectedIndex);
+        if (element === null)
+            return [0, 0];
+        let bounds = element.getBounds();
+        return [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+    }
+    deleteSelected(): void {
+        if (this.selectedIndex >= 0) {
+            this.drawInvoker.removeAt(this.selectedIndex);
+            this.selectedIndex = -1;
+            this.showShapeMenu = false;
+            this.selectAction = '';
+            this.path2Db = new Path2D();
+            this.mPath = new DrawPath(this.mPaint, this.path2Db);
+            this.arr = [];
+            this.refreshOffCanvas();
+            this.clearTopCanvas();
+            this.redoDraw = false;
+            this.unDoDraw = this.drawInvoker.canUndo();
+        }
+    }
+    rotateSelected(): void {
+        if (this.selectedIndex >= 0) {
+            let element = this.drawInvoker.getAt(this.selectedIndex);
+            if (element !== null) {
+                element.rotateBy(Math.PI / 12);
+                this.refreshOffCanvas();
+                this.drawSelectionBox();
+            }
+        }
+    }
     /**
      * Add a sketch path.
      */
@@ -546,9 +911,93 @@ class DrawCanvas extends ViewPU {
      */
     clear(): void {
         this.drawInvoker.clear();
+        this.selectedIndex = -1;
+        this.showShapeMenu = false;
+        this.selectAction = '';
+        this.path2Db = new Path2D();
+        this.mPath = new DrawPath(this.mPaint, this.path2Db);
+        this.arr = [];
         this.refreshOffCanvas();
+        this.clearTopCanvas();
         this.redoDraw = false;
         this.unDoDraw = false;
+    }
+    commitText(): void {
+        if (this.isTextEdit && this.selectedIndex >= 0) {
+            let element = this.drawInvoker.getAt(this.selectedIndex);
+            if (element instanceof TextDraw) {
+                if (this.textContent.trim().length === 0) {
+                    this.deleteSelected();
+                    this.isTextEdit = false;
+                    return;
+                }
+                element.text = this.textContent;
+                element.fontSize = this.textFontSize;
+                element.fontWeight = this.textFontWeight;
+                element.fontStyle = this.textFontStyle;
+                element.paint.StrokeStyle = this.textColor;
+                element.resetBounds();
+                element.computeTextBounds();
+                this.refreshOffCanvas();
+                this.drawSelectionBox();
+                this.isTextEdit = false;
+                return;
+            }
+            this.isTextEdit = false;
+        }
+        if (this.textContent.trim().length === 0) {
+            return;
+        }
+        let textPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
+        textPaint.setColor(this.textColor);
+        textPaint.setGlobalAlpha(CommonConstants.ONE);
+        let textDraw = new TextDraw(textPaint, this.textContent, this.textPlaceX, this.textPlaceY, this.textFontSize, this.textFontWeight, this.textFontStyle);
+        this.add(textDraw);
+        this.appendToOffCanvas(textDraw);
+        this.clearTopCanvas();
+        this.selectedIndex = this.drawInvoker.getCount() - 1;
+        this.selectDragStartX = this.textPlaceX;
+        this.selectDragStartY = this.textPlaceY;
+        this.selectAction = '';
+        this.showShapeMenu = true;
+        this.drawSelectionBox();
+        this.redoDraw = false;
+        this.unDoDraw = true;
+    }
+    myTextInputSheet(parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
+            Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
+        }, Column);
+        {
+            this.observeComponentCreation2((elmtId, isInitialRender) => {
+                if (isInitialRender) {
+                    let componentCall = new textInputSheet(this, {
+                        textContent: this.__textContent,
+                        textFontSize: this.__textFontSize,
+                        textFontWeight: this.__textFontWeight,
+                        textFontStyle: this.__textFontStyle,
+                        textColor: this.__textColor
+                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 390, col: 7 });
+                    ViewPU.create(componentCall);
+                    let paramsLambda = () => {
+                        return {
+                            textContent: this.textContent,
+                            textFontSize: this.textFontSize,
+                            textFontWeight: this.textFontWeight,
+                            textFontStyle: this.textFontStyle,
+                            textColor: this.textColor
+                        };
+                    };
+                    componentCall.paramsGenerator_ = paramsLambda;
+                }
+                else {
+                    this.updateStateVarsOfChildByElmtId(elmtId, {});
+                }
+            }, { name: "textInputSheet" });
+        }
+        Column.pop();
     }
     myPaintSheet(parent = null) {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
@@ -565,7 +1014,7 @@ class DrawCanvas extends ViewPU {
                         percent: this.__percent,
                         color: this.__color,
                         strokeWidth: this.__strokeWidth
-                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 189, col: 7 });
+                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 405, col: 7 });
                     ViewPU.create(componentCall);
                     let paramsLambda = () => {
                         return {
@@ -587,6 +1036,64 @@ class DrawCanvas extends ViewPU {
         }
         Column.pop();
     }
+    myEraserSheet(parent = null) {
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
+            Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.padding({
+                left: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+            });
+            Column.alignItems(HorizontalAlign.Start);
+            Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777253, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.textAlign(TextAlign.Start);
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Row.create();
+            Row.padding({
+                left: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+            });
+            Row.justifyContent(FlexAlign.SpaceBetween);
+            Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
+        }, Row);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Slider.create({
+                value: this.eraserWidth,
+                min: CommonConstants.THREE,
+                max: CommonConstants.TWENTY_ONE,
+                step: 1
+            });
+            Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Slider.minResponsiveDistance(CommonConstants.ONE);
+            Slider.onChange((value: number, _mode: SliderChangeMode) => {
+                this.eraserWidth = value;
+                this.mPaint.setStrokeWidth(this.eraserWidth);
+            });
+        }, Slider);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create(this.eraserWidth.toFixed(0));
+            Text.width(28);
+            Text.fontSize(11);
+            Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.textAlign(TextAlign.Center);
+        }, Text);
+        Text.pop();
+        Row.pop();
+        Column.pop();
+        Column.pop();
+    }
     shapeToolSheet(parent = null) {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -594,18 +1101,17 @@ class DrawCanvas extends ViewPU {
             Column.backgroundColor(Color.White);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777291, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777249, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(16);
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ top: 16, bottom: 12 });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Row.create();
-            Row.justifyContent(FlexAlign.SpaceEvenly);
-            Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Row.padding({ left: 24, right: 24, bottom: 20 });
-        }, Row);
+            Flex.create({ wrap: FlexWrap.Wrap, justifyContent: FlexAlign.SpaceEvenly });
+            Flex.width(CommonConstants.ONE_HUNDRED_PERCENT);
+            Flex.padding({ left: 16, right: 16, bottom: 20 });
+        }, Flex);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
             Column.width(80);
@@ -625,7 +1131,7 @@ class DrawCanvas extends ViewPU {
             Text.width(48);
             Text.height(48);
             Text.borderRadius(24);
-            Text.backgroundColor(this.shapeTool === 'line' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+            Text.backgroundColor(this.shapeTool === 'line' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
@@ -638,9 +1144,9 @@ class DrawCanvas extends ViewPU {
         Text.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777290, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777247, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(12);
-            Text.fontColor(this.shapeTool === 'line' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.shapeTool === 'line' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ top: 6 });
         }, Text);
         Text.pop();
@@ -664,7 +1170,7 @@ class DrawCanvas extends ViewPU {
             Text.width(48);
             Text.height(48);
             Text.borderRadius(24);
-            Text.backgroundColor(this.shapeTool === 'circle' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+            Text.backgroundColor(this.shapeTool === 'circle' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
@@ -675,9 +1181,9 @@ class DrawCanvas extends ViewPU {
         Text.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777288, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777223, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(12);
-            Text.fontColor(this.shapeTool === 'circle' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.shapeTool === 'circle' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ top: 6 });
         }, Text);
         Text.pop();
@@ -701,7 +1207,7 @@ class DrawCanvas extends ViewPU {
             Text.width(48);
             Text.height(48);
             Text.borderRadius(24);
-            Text.backgroundColor(this.shapeTool === 'rect' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+            Text.backgroundColor(this.shapeTool === 'rect' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
@@ -712,14 +1218,422 @@ class DrawCanvas extends ViewPU {
         Text.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777289, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777242, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(12);
-            Text.fontColor(this.shapeTool === 'rect' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.shapeTool === 'rect' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ top: 6 });
         }, Text);
         Text.pop();
         Column.pop();
-        Row.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'ellipse';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'ellipse' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('⬭');
+            Text.fontSize(22);
+            Text.fontColor(this.shapeTool === 'ellipse' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777233, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'ellipse' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'triangle';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'triangle' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('△');
+            Text.fontSize(22);
+            Text.fontColor(this.shapeTool === 'triangle' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777254, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'triangle' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'diamond';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'diamond' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('◇');
+            Text.fontSize(22);
+            Text.fontColor(this.shapeTool === 'diamond' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777232, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'diamond' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'star';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'star' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('☆');
+            Text.fontSize(22);
+            Text.fontColor(this.shapeTool === 'star' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777251, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'star' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'arrow';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'arrow' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('→');
+            Text.fontSize(22);
+            Text.fontColor(this.shapeTool === 'arrow' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777220, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'arrow' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'cube';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'cube' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Image.create({ "id": 16777288, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width(24);
+            Image.height(24);
+            Image.fillColor(this.shapeTool === 'cube' ? Color.White : Color.Black);
+        }, Image);
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777228, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'cube' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'cylinder';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'cylinder' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Image.create({ "id": 16777289, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width(24);
+            Image.height(24);
+            Image.fillColor(this.shapeTool === 'cylinder' ? Color.White : Color.Black);
+        }, Image);
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777230, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'cylinder' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'cone';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'cone' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Image.create({ "id": 16777287, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width(24);
+            Image.height(24);
+            Image.fillColor(this.shapeTool === 'cone' ? Color.White : Color.Black);
+        }, Image);
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777227, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'cone' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'pyramid';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'pyramid' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Image.create({ "id": 16777300, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width(24);
+            Image.height(24);
+            Image.fillColor(this.shapeTool === 'pyramid' ? Color.White : Color.Black);
+        }, Image);
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777241, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'pyramid' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'sphere';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'sphere' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Image.create({ "id": 16777307, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width(24);
+            Image.height(24);
+            Image.fillColor(this.shapeTool === 'sphere' ? Color.White : Color.Black);
+        }, Image);
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777250, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'sphere' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(80);
+            Column.alignItems(HorizontalAlign.Center);
+        }, Column);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Stack.create();
+            Stack.width(48);
+            Stack.height(48);
+            Stack.onClick(() => {
+                this.shapeTool = 'text';
+                this.isShapeShow = false;
+            });
+        }, Stack);
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create();
+            Text.width(48);
+            Text.height(48);
+            Text.borderRadius(24);
+            Text.backgroundColor(this.shapeTool === 'text' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
+        }, Text);
+        Text.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create('A');
+            Text.fontSize(22);
+            Text.fontWeight(FontWeight.Bold);
+            Text.fontColor(this.shapeTool === 'text' ? Color.White : Color.Black);
+        }, Text);
+        Text.pop();
+        Stack.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Text.create({ "id": 16777252, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize(12);
+            Text.fontColor(this.shapeTool === 'text' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: 6 });
+        }, Text);
+        Text.pop();
+        Column.pop();
+        Flex.pop();
         Column.pop();
     }
     initialRender() {
@@ -750,97 +1664,107 @@ class DrawCanvas extends ViewPU {
                 if (this.index === 1) {
                     return;
                 }
-                if (this.shapeTool !== '') {
-                    if (this.shapeTool === 'circle') {
-                        if (event.type === TouchType.Down && event.touches.length > 0) {
+                if (this.shapeTool !== '' && this.shapeTool !== 'select') {
+                    if (this.shapeTool === 'text') {
+                        if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Down) {
                             let touch = event.touches[0];
-                            if (!this.compassCenterFixed) {
-                                this.compassCenterX = touch.x;
-                                this.compassCenterY = touch.y;
-                                this.compassCenterFixed = true;
-                                this.compassDrawing = false;
+                            if (this.selectedIndex >= 0 && this.isDeleteHandleHit(touch.x, touch.y)) {
+                                this.deleteSelected();
+                                return;
                             }
-                            else {
-                                let dx = touch.x - this.compassCenterX;
-                                let dy = touch.y - this.compassCenterY;
-                                this.compassStartAngle = Math.atan2(dy, dx);
-                                this.compassDrawing = true;
+                            if (this.selectedIndex >= 0 && this.isRotateHandleHit(touch.x, touch.y)) {
+                                this.selectAction = 'rotate';
+                                let center = this.getSelectionCenter();
+                                this.selectDragStartX = center[0];
+                                this.selectDragStartY = center[1];
+                                return;
                             }
-                        }
-                        if (event.type === TouchType.Move && event.touches.length > 0) {
-                            let touch = event.touches[0];
-                            if (this.compassDrawing) {
-                                this.clearTopCanvas();
-                                let ctx = this.context;
-                                let dx = touch.x - this.compassCenterX;
-                                let dy = touch.y - this.compassCenterY;
-                                let radius = Math.sqrt(dx * dx + dy * dy);
-                                let currentAngle = Math.atan2(dy, dx);
-                                ctx.lineWidth = this.mPaint.lineWidth;
-                                ctx.strokeStyle = this.mPaint.StrokeStyle;
-                                ctx.globalAlpha = this.mPaint.globalAlpha;
-                                ctx.lineCap = 'round';
-                                ctx.beginPath();
-                                ctx.arc(this.compassCenterX, this.compassCenterY, radius, this.compassStartAngle, currentAngle);
-                                ctx.stroke();
-                                ctx.beginPath();
-                                ctx.arc(this.compassCenterX, this.compassCenterY, 5, 0, 2 * Math.PI);
-                                ctx.fillStyle = this.mPaint.StrokeStyle;
-                                ctx.fill();
-                            }
-                            else if (this.compassCenterFixed) {
-                                this.compassDrawing = true;
-                                this.compassStartAngle = 0;
-                                this.clearTopCanvas();
-                                let ctx = this.context;
-                                let dx = touch.x - this.compassCenterX;
-                                let dy = touch.y - this.compassCenterY;
-                                let radius = Math.sqrt(dx * dx + dy * dy);
-                                ctx.lineWidth = this.mPaint.lineWidth;
-                                ctx.strokeStyle = this.mPaint.StrokeStyle;
-                                ctx.globalAlpha = this.mPaint.globalAlpha;
-                                ctx.lineCap = 'round';
-                                ctx.beginPath();
-                                ctx.arc(this.compassCenterX, this.compassCenterY, radius, 0, 2 * Math.PI);
-                                ctx.stroke();
-                            }
-                        }
-                        if (event.type === TouchType.Up && event.touches.length > 0) {
-                            let touch = event.touches[0];
-                            if (this.compassDrawing) {
-                                let dx = touch.x - this.compassCenterX;
-                                let dy = touch.y - this.compassCenterY;
-                                let radius = Math.sqrt(dx * dx + dy * dy);
-                                if (radius < 1) {
-                                    this.compassDrawing = false;
-                                    this.compassCenterFixed = false;
-                                    this.clearTopCanvas();
+                            if (this.selectedIndex >= 0 && this.showShapeMenu) {
+                                let dx = touch.x - this.shapeMenuX;
+                                let dy = touch.y - this.shapeMenuY;
+                                if (dx * dx + dy * dy <= 625) {
+                                    this.deleteSelected();
                                     return;
                                 }
-                                let endAngle = Math.atan2(dy, dx);
-                                let shape: ShapeDraw;
-                                if (this.compassStartAngle === 0) {
-                                    shape = new ShapeDraw(this.mPaint, 'circle', this.compassCenterX, this.compassCenterY, touch.x, touch.y, 0, 2 * Math.PI);
+                            }
+                            let hitIndex = this.drawInvoker.findShapeAt(touch.x, touch.y);
+                            if (hitIndex >= 0) {
+                                let hitElement = this.drawInvoker.getAt(hitIndex);
+                                let now = Date.now();
+                                let dx = touch.x - this.lastTextClickX;
+                                let dy = touch.y - this.lastTextClickY;
+                                if (hitElement instanceof TextDraw && hitIndex === this.selectedIndex &&
+                                    now - this.lastTextClickTime < 400 && dx * dx + dy * dy < 900) {
+                                    this.isTextEdit = true;
+                                    this.textContent = hitElement.text;
+                                    this.textFontSize = hitElement.fontSize;
+                                    this.textFontWeight = hitElement.fontWeight;
+                                    this.textFontStyle = hitElement.fontStyle;
+                                    this.textColor = hitElement.paint.StrokeStyle;
+                                    this.isTextShow = true;
+                                    this.lastTextClickTime = 0;
+                                    return;
                                 }
-                                else {
-                                    shape = new ShapeDraw(this.mPaint, 'circle', this.compassCenterX, this.compassCenterY, touch.x, touch.y, this.compassStartAngle, endAngle);
-                                }
-                                this.add(shape);
-                                this.appendToOffCanvas(shape);
-                                this.clearTopCanvas();
-                                this.compassDrawing = false;
-                                this.compassCenterFixed = false;
-                                this.redoDraw = false;
-                                this.unDoDraw = true;
+                                this.lastTextClickTime = now;
+                                this.lastTextClickX = touch.x;
+                                this.lastTextClickY = touch.y;
+                                this.selectedIndex = hitIndex;
+                                this.selectDragStartX = touch.x;
+                                this.selectDragStartY = touch.y;
+                                this.selectAction = 'move';
+                                this.drawSelectionBox();
+                                this.showShapeMenu = true;
                             }
                             else {
-                                this.compassCenterFixed = true;
-                                let ctx = this.context;
-                                ctx.beginPath();
-                                ctx.arc(this.compassCenterX, this.compassCenterY, 5, 0, 2 * Math.PI);
-                                ctx.fillStyle = this.mPaint.StrokeStyle;
-                                ctx.globalAlpha = this.mPaint.globalAlpha;
-                                ctx.fill();
+                                this.lastTextClickTime = 0;
+                                if (this.selectedIndex >= 0) {
+                                    this.selectedIndex = -1;
+                                    this.showShapeMenu = false;
+                                    this.clearTopCanvas();
+                                }
+                                this.isTextEdit = false;
+                                this.textPlaceX = touch.x;
+                                this.textPlaceY = touch.y;
+                                this.textContent = '';
+                                this.isTextShow = true;
+                            }
+                        }
+                        if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Move) {
+                            if (this.selectAction === 'rotate' && this.selectedIndex >= 0) {
+                                let touch = event.touches[0];
+                                let center = this.getSelectionCenter();
+                                let prevAngle = Math.atan2(this.selectDragStartY - center[1], this.selectDragStartX - center[0]);
+                                let curAngle = Math.atan2(touch.y - center[1], touch.x - center[0]);
+                                let deltaAngle = curAngle - prevAngle;
+                                let element = this.drawInvoker.getAt(this.selectedIndex);
+                                if (element !== null) {
+                                    element.rotateBy(deltaAngle);
+                                    this.selectDragStartX = touch.x;
+                                    this.selectDragStartY = touch.y;
+                                    this.refreshOffCanvas();
+                                    this.drawSelectionBox();
+                                }
+                                return;
+                            }
+                            if (this.selectedIndex >= 0 && this.selectAction === 'move') {
+                                let touch = event.touches[0];
+                                let dx = touch.x - this.selectDragStartX;
+                                let dy = touch.y - this.selectDragStartY;
+                                let element = this.drawInvoker.getAt(this.selectedIndex);
+                                if (element !== null) {
+                                    element.moveBy(dx, dy);
+                                    this.selectDragStartX = touch.x;
+                                    this.selectDragStartY = touch.y;
+                                    this.refreshOffCanvas();
+                                    this.drawSelectionBox();
+                                }
+                                return;
+                            }
+                        }
+                        if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Up) {
+                            if (this.selectAction === 'move' || this.selectAction === 'rotate') {
+                                this.selectAction = '';
+                                return;
                             }
                         }
                         return;
@@ -862,18 +1786,162 @@ class DrawCanvas extends ViewPU {
                     }
                     return;
                 }
-                this.arr.push(event.touches[0].x + event.touches[0].y);
                 if (event.touches.length > 1) {
                     return;
                 }
                 if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Down) {
+                    let touch = event.touches[0];
+                    if (this.selectedIndex >= 0 && this.isRotateHandleHit(touch.x, touch.y)) {
+                        this.selectAction = 'rotate';
+                        let center = this.getSelectionCenter();
+                        this.selectDragStartX = center[0];
+                        this.selectDragStartY = center[1];
+                        return;
+                    }
+                    if (this.selectedIndex >= 0 && this.isDeleteHandleHit(touch.x, touch.y)) {
+                        this.deleteSelected();
+                        return;
+                    }
+                    if (this.selectedIndex >= 0 && this.showShapeMenu) {
+                        let dx = touch.x - this.shapeMenuX;
+                        let dy = touch.y - this.shapeMenuY;
+                        if (dx * dx + dy * dy <= 625) {
+                            this.deleteSelected();
+                            return;
+                        }
+                    }
+                    if (this.isPaint && this.shapeTool === '') {
+                        let hitIndex = this.drawInvoker.findShapeAt(touch.x, touch.y);
+                        if (hitIndex >= 0) {
+                            let hitElement = this.drawInvoker.getAt(hitIndex);
+                            let now = Date.now();
+                            let dx2 = touch.x - this.lastTextClickX;
+                            let dy2 = touch.y - this.lastTextClickY;
+                            if (hitElement instanceof TextDraw && hitIndex === this.selectedIndex &&
+                                now - this.lastTextClickTime < 400 && dx2 * dx2 + dy2 * dy2 < 900) {
+                                this.isTextEdit = true;
+                                this.textContent = hitElement.text;
+                                this.textFontSize = hitElement.fontSize;
+                                this.textFontWeight = hitElement.fontWeight;
+                                this.textFontStyle = hitElement.fontStyle;
+                                this.textColor = hitElement.paint.StrokeStyle;
+                                this.isTextShow = true;
+                                this.lastTextClickTime = 0;
+                                return;
+                            }
+                            this.lastTextClickTime = now;
+                            this.lastTextClickX = touch.x;
+                            this.lastTextClickY = touch.y;
+                            this.selectedIndex = hitIndex;
+                            this.selectDragStartX = touch.x;
+                            this.selectDragStartY = touch.y;
+                            this.selectAction = 'move';
+                            this.drawSelectionBox();
+                            this.showShapeMenu = true;
+                            return;
+                        }
+                        else {
+                            this.lastTextClickTime = 0;
+                            if (this.selectedIndex >= 0) {
+                                this.selectedIndex = -1;
+                                this.showShapeMenu = false;
+                                this.clearTopCanvas();
+                            }
+                        }
+                    }
+                    else if (!this.isPaint && !this.isEraser && this.shapeTool === '') {
+                        let hitIndex = this.drawInvoker.findShapeAt(touch.x, touch.y);
+                        if (hitIndex >= 0) {
+                            let hitElement = this.drawInvoker.getAt(hitIndex);
+                            let now = Date.now();
+                            let dx2 = touch.x - this.lastTextClickX;
+                            let dy2 = touch.y - this.lastTextClickY;
+                            if (hitElement instanceof TextDraw && hitIndex === this.selectedIndex &&
+                                now - this.lastTextClickTime < 400 && dx2 * dx2 + dy2 * dy2 < 900) {
+                                this.isTextEdit = true;
+                                this.textContent = hitElement.text;
+                                this.textFontSize = hitElement.fontSize;
+                                this.textFontWeight = hitElement.fontWeight;
+                                this.textFontStyle = hitElement.fontStyle;
+                                this.textColor = hitElement.paint.StrokeStyle;
+                                this.isTextShow = true;
+                                this.lastTextClickTime = 0;
+                                return;
+                            }
+                            this.lastTextClickTime = now;
+                            this.lastTextClickX = touch.x;
+                            this.lastTextClickY = touch.y;
+                            this.selectedIndex = hitIndex;
+                            this.selectDragStartX = touch.x;
+                            this.selectDragStartY = touch.y;
+                            this.selectAction = 'move';
+                            this.drawSelectionBox();
+                            this.showShapeMenu = true;
+                        }
+                        else {
+                            this.lastTextClickTime = 0;
+                            this.selectedIndex = -1;
+                            this.showShapeMenu = false;
+                            this.clearTopCanvas();
+                        }
+                        return;
+                    }
                     this.mPath = new DrawPath(this.mPaint, this.path2Db);
                     this.mPath.paint = this.mPaint;
                     this.mPath.path = new Path2D();
-                    this.mBrush.down(this.mPath.path, event.touches[0].x, event.touches[0].y);
+                    this.mBrush.down(this.mPath.path, touch.x, touch.y);
+                    this.mPath.updateBounds(touch.x, touch.y);
                 }
                 if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Move) {
+                    if (this.selectAction === 'rotate' && this.selectedIndex >= 0) {
+                        let touch = event.touches[0];
+                        let center = this.getSelectionCenter();
+                        let prevAngle = Math.atan2(this.selectDragStartY - center[1], this.selectDragStartX - center[0]);
+                        let curAngle = Math.atan2(touch.y - center[1], touch.x - center[0]);
+                        let deltaAngle = curAngle - prevAngle;
+                        let element = this.drawInvoker.getAt(this.selectedIndex);
+                        if (element !== null) {
+                            element.rotateBy(deltaAngle);
+                            this.selectDragStartX = touch.x;
+                            this.selectDragStartY = touch.y;
+                            this.refreshOffCanvas();
+                            this.drawSelectionBox();
+                        }
+                        return;
+                    }
+                    if (!this.isPaint && !this.isEraser && this.shapeTool === '') {
+                        if (this.selectedIndex >= 0 && this.selectAction === 'move') {
+                            let touch = event.touches[0];
+                            let dx = touch.x - this.selectDragStartX;
+                            let dy = touch.y - this.selectDragStartY;
+                            let element = this.drawInvoker.getAt(this.selectedIndex);
+                            if (element !== null) {
+                                element.moveBy(dx, dy);
+                                this.selectDragStartX = touch.x;
+                                this.selectDragStartY = touch.y;
+                                this.refreshOffCanvas();
+                                this.drawSelectionBox();
+                            }
+                        }
+                        return;
+                    }
+                    this.arr.push(event.touches[0].x + event.touches[0].y);
+                    if (this.selectedIndex >= 0 && this.selectAction === 'move') {
+                        let touch = event.touches[0];
+                        let dx = touch.x - this.selectDragStartX;
+                        let dy = touch.y - this.selectDragStartY;
+                        let element = this.drawInvoker.getAt(this.selectedIndex);
+                        if (element !== null) {
+                            element.moveBy(dx, dy);
+                            this.selectDragStartX = touch.x;
+                            this.selectDragStartY = touch.y;
+                            this.refreshOffCanvas();
+                            this.drawSelectionBox();
+                        }
+                        return;
+                    }
                     this.mBrush.move(this.mPath.path, event.touches[0].x, event.touches[0].y);
+                    this.mPath.updateBounds(event.touches[0].x, event.touches[0].y);
                     if (this.isFountainPen && this.mBrush instanceof FountainPenBrush) {
                         this.mPath.isFountainPen = true;
                         this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points;
@@ -884,6 +1952,10 @@ class DrawCanvas extends ViewPU {
                     }
                 }
                 if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Up) {
+                    if (this.selectAction === 'move' || this.selectAction === 'rotate') {
+                        this.selectAction = '';
+                        return;
+                    }
                     if (this.isFountainPen && this.mBrush instanceof FountainPenBrush) {
                         this.mPath.isFountainPen = true;
                         this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points.slice();
@@ -950,6 +2022,25 @@ class DrawCanvas extends ViewPU {
         }, Column);
         Column.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
+            Column.create();
+            Column.width(1);
+            Column.height(1);
+            Column.bindSheet({ value: this.isTextShow, changeEvent: newValue => { this.isTextShow = newValue; } }, { builder: () => {
+                    this.myTextInputSheet.call(this);
+                } }, {
+                height: 500,
+                backgroundColor: Color.White,
+                title: {
+                    title: { "id": 16777252, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                },
+                detents: CommonConstants.DETENTS,
+                onWillDisappear: () => {
+                    this.commitText();
+                }
+            });
+        }, Column);
+        Column.pop();
+        this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.justifyContent(FlexAlign.SpaceEvenly);
             Row.alignItems(VerticalAlign.Center);
@@ -960,15 +2051,15 @@ class DrawCanvas extends ViewPU {
             Stack.bindSheet({ value: this.isShow, changeEvent: newValue => { this.isShow = newValue; } }, { builder: () => {
                     this.myPaintSheet.call(this);
                 } }, {
-                height: { "id": 16777250, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                height: { "id": 16777271, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
                 backgroundColor: Color.White,
                 title: {
-                    title: { "id": 16777229, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                    title: { "id": 16777240, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
                 },
                 detents: CommonConstants.DETENTS
             });
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -976,15 +2067,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.isPaint && this.index === CommonConstants.NEGATIVE_ONE ? { "id": 16777274, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777273, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(this.isPaint && this.index === CommonConstants.NEGATIVE_ONE ? { "id": 16777299, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777298, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777229, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.isPaint && this.index === CommonConstants.NEGATIVE_ONE ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777240, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.isPaint && this.index === CommonConstants.NEGATIVE_ONE ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();
@@ -994,9 +2085,23 @@ class DrawCanvas extends ViewPU {
             Button.width(CommonConstants.ONE_HUNDRED_PERCENT);
             Button.height(CommonConstants.ONE_HUNDRED_PERCENT);
             Button.onClick(() => {
-                this.ToggleThicknessColor();
-                this.isPaint = true;
-                this.isShow = !this.isShow;
+                if (this.isPaint) {
+                    this.isPaint = false;
+                    this.isEraser = false;
+                    this.isShow = false;
+                    this.selectedIndex = -1;
+                    this.showShapeMenu = false;
+                    this.clearTopCanvas();
+                }
+                else {
+                    this.ToggleThicknessColor();
+                    this.isPaint = true;
+                    this.isEraser = false;
+                    this.isShow = !this.isShow;
+                    this.selectedIndex = -1;
+                    this.showShapeMenu = false;
+                    this.clearTopCanvas();
+                }
                 this.index = -1;
                 this.arr = [];
             });
@@ -1008,12 +2113,12 @@ class DrawCanvas extends ViewPU {
             Stack.bindSheet({ value: this.isShapeShow, changeEvent: newValue => { this.isShapeShow = newValue; } }, { builder: () => {
                     this.shapeToolSheet.call(this);
                 } }, {
-                height: 140,
+                height: 300,
                 backgroundColor: Color.White,
                 detents: CommonConstants.DETENTS
             });
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -1021,15 +2126,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.shapeTool !== '' ? { "id": 16777274, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777273, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(this.shapeTool !== '' ? { "id": 16777299, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777298, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777291, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.shapeTool !== '' ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777249, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.shapeTool !== '' ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();
@@ -1039,6 +2144,7 @@ class DrawCanvas extends ViewPU {
             Button.width(CommonConstants.ONE_HUNDRED_PERCENT);
             Button.height(CommonConstants.ONE_HUNDRED_PERCENT);
             Button.onClick(() => {
+                this.isEraser = false;
                 if (this.shapeTool !== '') {
                     this.shapeTool = '';
                 }
@@ -1051,8 +2157,18 @@ class DrawCanvas extends ViewPU {
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.bindSheet({ value: this.isEraserShow, changeEvent: newValue => { this.isEraserShow = newValue; } }, { builder: () => {
+                    this.myEraserSheet.call(this);
+                } }, {
+                height: 120,
+                backgroundColor: Color.White,
+                title: {
+                    title: { "id": 16777246, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                },
+                detents: CommonConstants.DETENTS
+            });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -1060,15 +2176,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.isPaint || this.index === CommonConstants.ONE ? { "id": 16777280, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777281, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(!this.isEraser ? { "id": 16777305, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777306, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777232, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.isPaint || this.index === CommonConstants.ONE ? { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777246, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(!this.isEraser ? { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();
@@ -1079,18 +2195,20 @@ class DrawCanvas extends ViewPU {
             Button.height(CommonConstants.ONE_HUNDRED_PERCENT);
             Button.onClick(() => {
                 this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
-                this.mPaint.setStrokeWidth(CommonConstants.TEN);
+                this.mPaint.setStrokeWidth(this.eraserWidth);
                 this.mPaint.setColor(CommonConstants.WHITE);
                 this.mPaint.setGlobalAlpha(CommonConstants.ONE);
                 this.isPaint = false;
+                this.isEraser = true;
+                this.isEraserShow = !this.isEraserShow;
             });
         }, Button);
         Button.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -1098,15 +2216,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.unDoDraw ? { "id": 16777277, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777276, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(this.unDoDraw ? { "id": 16777302, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777301, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777231, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.unDoDraw ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777243, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.unDoDraw ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();
@@ -1124,8 +2242,8 @@ class DrawCanvas extends ViewPU {
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -1133,15 +2251,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.redoDraw ? { "id": 16777279, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777278, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(this.redoDraw ? { "id": 16777304, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777303, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777234, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.redoDraw ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777255, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.redoDraw ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();
@@ -1159,8 +2277,8 @@ class DrawCanvas extends ViewPU {
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width({ "id": 16777257, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Stack.height({ "id": 16777256, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.width({ "id": 16777278, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777277, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
@@ -1168,15 +2286,15 @@ class DrawCanvas extends ViewPU {
             Column.height(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.clean ? { "id": 16777265, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777264, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.margin({ bottom: { "id": 16777244, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Image.create(this.clean ? { "id": 16777286, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777285, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.margin({ bottom: { "id": 16777265, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777222, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777249, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.clean ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777224, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777270, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.clean ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Column.pop();

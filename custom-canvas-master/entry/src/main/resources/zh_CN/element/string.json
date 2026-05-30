@@ -29,16 +29,8 @@
       "value": "马克笔"
     },
     {
-      "name": "pencil",
-      "value": "铅笔"
-    },
-    {
       "name": "fountain_pen",
       "value": "钢笔"
-    },
-    {
-      "name": "laser_pointer",
-      "value": "激光笔"
     },
     {
       "name": "color",
@@ -76,10 +68,7 @@
       "name": "ruler",
       "value": "直尺"
     },
-    {
-      "name": "compass",
-      "value": "圆规"
-    },
+
     {
       "name": "rect_tool",
       "value": "矩形"
@@ -95,6 +84,74 @@
     {
       "name": "rgb_slider",
       "value": "RGB滑块"
+    },
+    {
+      "name": "ellipse_tool",
+      "value": "椭圆"
+    },
+    {
+      "name": "triangle_tool",
+      "value": "三角形"
+    },
+    {
+      "name": "diamond_tool",
+      "value": "菱形"
+    },
+    {
+      "name": "star_tool",
+      "value": "五角星"
+    },
+    {
+      "name": "arrow_tool",
+      "value": "箭头"
+    },
+    {
+      "name": "cube_tool",
+      "value": "正方体"
+    },
+    {
+      "name": "cylinder_tool",
+      "value": "圆柱"
+    },
+    {
+      "name": "cone_tool",
+      "value": "圆锥"
+    },
+    {
+      "name": "pyramid_tool",
+      "value": "棱锥"
+    },
+    {
+      "name": "sphere_tool",
+      "value": "球体"
+    },
+    {
+      "name": "select_tool",
+      "value": "选择"
+    },
+    {
+      "name": "circle_tool",
+      "value": "圆形"
+    },
+    {
+      "name": "delete_tool",
+      "value": "删除"
+    },
+    {
+      "name": "rotate_tool",
+      "value": "旋转"
+    },
+    {
+      "name": "text_tool",
+      "value": "文字"
+    },
+    {
+      "name": "font_size_label",
+      "value": "字号"
+    },
+    {
+      "name": "font_style_label",
+      "value": "样式"
     }
   ]
 }

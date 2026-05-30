@@ -43,15 +43,15 @@
 						"actions":	["action.system.home"]
 					}],
 				"descriptionId":	16777218,
-				"iconId":	16777269,
+				"iconId":	16777294,
 				"labelId":	16777219,
-				"startWindowIconId":	16777282,
-				"startWindowBackgroundId":	16777239
+				"startWindowIconId":	16777308,
+				"startWindowBackgroundId":	16777260
 			}],
 		"packageName":	"entry",
 		"virtualMachine":	"ark12.0.6.0",
 		"compileMode":	"esmodule",
 		"dependencies":	[],
-		"descriptionId":	16777227
+		"descriptionId":	16777238
 	}
 }

@@ -18,16 +18,14 @@ export default class DrawInvoker {
         this.redoList = [];
     }
     clear(): void {
-        if (this.drawPathList.length > 0 || this.redoList.length > 0) {
-            try {
-                this.drawPathList.clear();
-            }
-            catch (error) {
-                let err = error as BusinessError;
-                hilog.error(0x0000, 'DrawInvoker', `list clear failed. code=${err.code}, message=${err.message}`);
-            }
-            this.redoList = [];
+        try {
+            this.drawPathList.clear();
         }
+        catch (error) {
+            let err = error as BusinessError;
+            hilog.error(0x0000, 'DrawInvoker', `list clear failed. code=${err.code}, message=${err.message}`);
+        }
+        this.redoList = [];
     }
     undo(): void {
         if (this.drawPathList.length > 0) {
@@ -73,5 +71,35 @@ export default class DrawInvoker {
     }
     canUndo(): boolean {
         return this.drawPathList.length > 0;
+    }
+    removeAt(index: number): void {
+        if (index >= 0 && index < this.drawPathList.length) {
+            try {
+                this.drawPathList.removeByIndex(index);
+            }
+            catch (error) {
+                let err = error as BusinessError;
+                hilog.error(0x0000, 'DrawInvoker', `removeAt failed. code=${err.code}, message=${err.message}`);
+            }
+            this.redoList = [];
+        }
+    }
+    getAt(index: number): DrawPath | null {
+        if (index >= 0 && index < this.drawPathList.length) {
+            return this.drawPathList.get(index);
+        }
+        return null;
+    }
+    getCount(): number {
+        return this.drawPathList.length;
+    }
+    findShapeAt(x: number, y: number): number {
+        for (let i = this.drawPathList.length - 1; i >= 0; i--) {
+            let element = this.drawPathList.get(i);
+            if (element.hitTest(x, y)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

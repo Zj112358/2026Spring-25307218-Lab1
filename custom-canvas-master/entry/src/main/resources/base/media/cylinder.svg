@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Top ellipse (full, solid) -->
+  <ellipse cx="12" cy="7" rx="8" ry="3" stroke="black" stroke-width="1.5" fill="none"/>
+  <!-- Left side line (solid) -->
+  <line x1="4" y1="7" x2="4" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Right side line (solid) -->
+  <line x1="20" y1="7" x2="20" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Bottom ellipse front half (solid) -->
+  <path d="M 4 17 A 8 3 0 0 0 20 17" stroke="black" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Bottom ellipse back half (dashed) -->
+  <path d="M 4 17 A 8 3 0 0 1 20 17" stroke="black" stroke-width="1.5" fill="none" stroke-dasharray="2 2" stroke-linecap="round"/>
+</svg>

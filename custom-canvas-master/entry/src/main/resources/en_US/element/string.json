@@ -29,16 +29,8 @@
       "value": "marker"
     },
     {
-      "name": "pencil",
-      "value": "pencil"
-    },
-    {
       "name": "fountain_pen",
       "value": "fountain pen"
-    },
-    {
-      "name": "laser_pointer",
-      "value": "laser pointer"
     },
     {
       "name": "color",
@@ -76,10 +68,7 @@
       "name": "ruler",
       "value": "ruler"
     },
-    {
-      "name": "compass",
-      "value": "compass"
-    },
+
     {
       "name": "rect_tool",
       "value": "rectangle"
@@ -95,6 +84,74 @@
     {
       "name": "rgb_slider",
       "value": "RGB Slider"
+    },
+    {
+      "name": "ellipse_tool",
+      "value": "ellipse"
+    },
+    {
+      "name": "triangle_tool",
+      "value": "triangle"
+    },
+    {
+      "name": "diamond_tool",
+      "value": "diamond"
+    },
+    {
+      "name": "star_tool",
+      "value": "star"
+    },
+    {
+      "name": "arrow_tool",
+      "value": "arrow"
+    },
+    {
+      "name": "cube_tool",
+      "value": "cube"
+    },
+    {
+      "name": "cylinder_tool",
+      "value": "cylinder"
+    },
+    {
+      "name": "cone_tool",
+      "value": "cone"
+    },
+    {
+      "name": "pyramid_tool",
+      "value": "pyramid"
+    },
+    {
+      "name": "sphere_tool",
+      "value": "sphere"
+    },
+    {
+      "name": "select_tool",
+      "value": "select"
+    },
+    {
+      "name": "circle_tool",
+      "value": "circle"
+    },
+    {
+      "name": "delete_tool",
+      "value": "delete"
+    },
+    {
+      "name": "rotate_tool",
+      "value": "rotate"
+    },
+    {
+      "name": "text_tool",
+      "value": "text"
+    },
+    {
+      "name": "font_size_label",
+      "value": "font size"
+    },
+    {
+      "name": "font_style_label",
+      "value": "style"
     }
   ]
 }

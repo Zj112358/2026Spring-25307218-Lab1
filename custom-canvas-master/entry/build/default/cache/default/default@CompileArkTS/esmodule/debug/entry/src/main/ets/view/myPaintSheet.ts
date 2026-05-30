@@ -220,57 +220,57 @@ export class myPaintSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
             Column.padding({
-                left: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                top: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                top: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Column.alignItems(HorizontalAlign.Start);
             Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Column.margin({ bottom: { "id": 16777259, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Column.margin({ bottom: { "id": 16777280, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777221, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777222, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.textAlign(TextAlign.Start);
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ bottom: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.padding({
-                left: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
             Row.justifyContent(FlexAlign.SpaceBetween);
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
-            Column.width({ "id": 16777246, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Column.height({ "id": 16777245, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.width({ "id": 16777267, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.height({ "id": 16777266, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create();
-            Text.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.backgroundColor(this.isMarker || this.isFountainPen ? { "id": 16777238, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.backgroundColor(this.isMarker || this.isFountainPen ? { "id": 16777259, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.isMarker || this.isFountainPen ? { "id": 16777260, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777261, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.create(this.isMarker || this.isFountainPen ? { "id": 16777281, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777282, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Button.createWithLabel({ type: ButtonType.Normal });
-            Button.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Button.backgroundColor(Color.Transparent);
             Button.onClick(() => {
                 this.isMarker = false;
@@ -283,39 +283,39 @@ export class myPaintSheet extends ViewPU {
         Button.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777220, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.isMarker || this.isFountainPen ? { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ top: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.create({ "id": 16777221, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.isMarker || this.isFountainPen ? { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         Column.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
-            Column.width({ "id": 16777246, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Column.height({ "id": 16777245, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.width({ "id": 16777267, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.height({ "id": 16777266, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create();
-            Text.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.backgroundColor(this.isMarker && !this.isFountainPen ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777238, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.backgroundColor(this.isMarker && !this.isFountainPen ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777259, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.isMarker && !this.isFountainPen ? { "id": 16777271, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777270, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.create(this.isMarker && !this.isFountainPen ? { "id": 16777296, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777295, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Button.createWithLabel({ type: ButtonType.Normal });
-            Button.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Button.backgroundColor(Color.Transparent);
             Button.onClick(() => {
                 this.isMarker = true;
@@ -328,39 +328,39 @@ export class myPaintSheet extends ViewPU {
         Button.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777226, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.isMarker && !this.isFountainPen ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ top: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.create({ "id": 16777237, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.isMarker && !this.isFountainPen ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         Column.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
-            Column.width({ "id": 16777246, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Column.height({ "id": 16777245, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.width({ "id": 16777267, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Column.height({ "id": 16777266, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create();
-            Text.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.backgroundColor(this.isFountainPen ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777238, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.backgroundColor(this.isFountainPen ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777259, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Image.create(this.isFountainPen ? { "id": 16777285, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777267, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.create(this.isFountainPen ? { "id": 16777292, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777291, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.width({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Image);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Button.createWithLabel({ type: ButtonType.Normal });
-            Button.width({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.height({ "id": 16777241, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Button.borderRadius({ "id": 16777242, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.width({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.height({ "id": 16777262, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Button.borderRadius({ "id": 16777263, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Button.backgroundColor(Color.Transparent);
             Button.onClick(() => {
                 this.isFountainPen = true;
@@ -373,10 +373,10 @@ export class myPaintSheet extends ViewPU {
         Button.pop();
         Stack.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777224, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontColor(this.isFountainPen ? { "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ top: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.create({ "id": 16777236, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor(this.isFountainPen ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.margin({ top: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         Column.pop();
@@ -385,27 +385,27 @@ export class myPaintSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
             Column.padding({
-                left: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Column.alignItems(HorizontalAlign.Start);
             Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Column.margin({ bottom: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Column.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
-            Row.margin({ bottom: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Row.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777223, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777225, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create(this.colorMode === 0 ? { "id": 16777293, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777292, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create(this.colorMode === 0 ? { "id": 16777226, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : { "id": 16777244, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(12);
-            Text.fontColor({ "id": 16777240, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontColor({ "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ left: 12 });
             Text.onClick(() => {
                 this.colorMode = (this.colorMode + 1) % 2;
@@ -420,15 +420,14 @@ export class myPaintSheet extends ViewPU {
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         Column.create();
                         Column.padding({
-                            left: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                            right: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                            left: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                            right: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
                         });
                         Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
                     }, Column);
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         Row.create();
                         Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-                        Row.justifyContent(FlexAlign.SpaceEvenly);
                     }, Row);
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         ForEach.create();
@@ -484,8 +483,6 @@ export class myPaintSheet extends ViewPU {
                             this.observeComponentCreation2((elmtId, isInitialRender) => {
                                 Row.create();
                                 Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-                                Row.justifyContent(FlexAlign.SpaceEvenly);
-                                Row.margin({ top: 1 });
                             }, Row);
                             this.observeComponentCreation2((elmtId, isInitialRender) => {
                                 ForEach.create();
@@ -547,8 +544,8 @@ export class myPaintSheet extends ViewPU {
                         Column.create();
                         Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
                         Column.padding({
-                            left: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                            right: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                            left: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                            right: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
                         });
                     }, Column);
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
@@ -567,7 +564,7 @@ export class myPaintSheet extends ViewPU {
                     Text.pop();
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         Slider.create({ value: this.redValue, min: 0, max: 255 });
-                        Slider.width({ "id": 16777258, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                        Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                         Slider.selectedColor('#E90808');
                         Slider.trackColor(Color.Black);
                         Slider.blockColor('#E90808');
@@ -604,7 +601,7 @@ export class myPaintSheet extends ViewPU {
                     Text.pop();
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         Slider.create({ value: this.greenValue, min: 0, max: 255 });
-                        Slider.width({ "id": 16777258, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                        Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                         Slider.selectedColor('#63B959');
                         Slider.trackColor(Color.Black);
                         Slider.blockColor('#63B959');
@@ -641,7 +638,7 @@ export class myPaintSheet extends ViewPU {
                     Text.pop();
                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                         Slider.create({ value: this.blueValue, min: 0, max: 255 });
-                        Slider.width({ "id": 16777258, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                        Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                         Slider.selectedColor('#0A59F7');
                         Slider.trackColor(Color.Black);
                         Slider.blockColor('#0A59F7');
@@ -671,7 +668,7 @@ export class myPaintSheet extends ViewPU {
             Row.margin({ top: 6 });
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777287, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777229, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontSize(12);
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
@@ -692,26 +689,26 @@ export class myPaintSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
             Column.padding({
-                left: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Column.alignItems(HorizontalAlign.Start);
             Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Column.margin({ bottom: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Column.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777228, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777239, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.textAlign(TextAlign.Start);
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ bottom: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.margin({ bottom: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.padding({
-                left: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777253, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777274, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Row.justifyContent(FlexAlign.SpaceBetween);
             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
@@ -721,13 +718,13 @@ export class myPaintSheet extends ViewPU {
                 style: SliderStyle.InSet,
                 value: this.alpha * CommonConstants.ONE_HUNDRED
             });
-            Slider.height({ "id": 16777246, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Slider.width({ "id": 16777258, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Slider.height({ "id": 16777267, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Slider.selectedColor(Color.Transparent);
             Slider.minResponsiveDistance(CommonConstants.ONE);
             Slider.trackColor(new LinearGradient([
-                { color: { "id": 16777236, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }, offset: CommonConstants.ZERO },
-                { color: { "id": 16777235, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }, offset: CommonConstants.ONE }
+                { color: { "id": 16777257, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }, offset: CommonConstants.ZERO },
+                { color: { "id": 16777256, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }, offset: CommonConstants.ONE }
             ]));
             Slider.onChange((value: number) => {
                 this.alpha = value / 100;
@@ -737,12 +734,12 @@ export class myPaintSheet extends ViewPU {
         }, Slider);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create(this.percent + CommonConstants.SIGN);
-            Text.width({ "id": 16777254, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.height({ "id": 16777251, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.fontSize({ "id": 16777248, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.borderRadius({ "id": 16777243, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.width({ "id": 16777275, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777272, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777269, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777264, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.textAlign(TextAlign.Center);
-            Text.backgroundColor({ "id": 16777237, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.backgroundColor({ "id": 16777258, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
         }, Text);
         Text.pop();
         Row.pop();
@@ -750,25 +747,25 @@ export class myPaintSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
             Column.padding({
-                left: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777255, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777276, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Column.alignItems(HorizontalAlign.Start);
             Column.width(CommonConstants.ONE_HUNDRED_PERCENT);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
-            Text.create({ "id": 16777233, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.create({ "id": 16777253, "type": 10003, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.textAlign(TextAlign.Start);
-            Text.fontSize({ "id": 16777247, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.fontSize({ "id": 16777268, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Text.margin({ bottom: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
+            Text.margin({ bottom: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } });
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.padding({
-                left: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
-                right: { "id": 16777252, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
+                left: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" },
+                right: { "id": 16777273, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" }
             });
             Row.justifyContent(FlexAlign.SpaceBetween);
             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
@@ -780,7 +777,7 @@ export class myPaintSheet extends ViewPU {
                 max: CommonConstants.TWENTY_ONE,
                 step: 1
             });
-            Slider.width({ "id": 16777258, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Slider.width({ "id": 16777279, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Slider.minResponsiveDistance(CommonConstants.ONE);
             Slider.onChange((value: number, _mode: SliderChangeMode) => {
                 this.strokeWidth = value;

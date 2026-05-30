@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+  <!-- Bottom face visible edges (solid) -->
+  <!-- V1(4,17) to V2(15,17) front bottom edge -->
+  <line x1="4" y1="17" x2="15" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- V2(15,17) to V3(18,12) right bottom edge -->
+  <line x1="15" y1="17" x2="18" y2="12" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Side edges (solid, visible) -->
+  <!-- P(9,3) to V1(4,17) left front -->
+  <line x1="9" y1="3" x2="4" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- P(9,3) to V2(15,17) right front -->
+  <line x1="9" y1="3" x2="15" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- P(9,3) to V3(18,12) right back -->
+  <line x1="9" y1="3" x2="18" y2="12" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Hidden edges (dashed) -->
+  <!-- V3(18,12) to V4(7,12) back bottom edge -->
+  <line x1="18" y1="12" x2="7" y2="12" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+  <!-- V4(7,12) to V1(4,17) left bottom edge -->
+  <line x1="7" y1="12" x2="4" y2="17" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+  <!-- P(9,3) to V4(7,12) left back side edge -->
+  <line x1="9" y1="3" x2="7" y2="12" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+</svg>

@@ -230,7 +230,6 @@ export struct myPaintSheet {
               }, (item: string, index: number) => `gray_${index}`)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
-            .justifyContent(FlexAlign.SpaceEvenly)
 
             ForEach(CommonConstants.COLOR_GRID, (row: string[], rowIndex: number) => {
               Row() {
@@ -258,8 +257,6 @@ export struct myPaintSheet {
                 }, (item: string, colIndex: number) => `grid_${rowIndex}_${colIndex}`)
               }
               .width(CommonConstants.ONE_HUNDRED_PERCENT)
-              .justifyContent(FlexAlign.SpaceEvenly)
-              .margin({ top: 1 })
             }, (row: string[], rowIndex: number) => `row_${rowIndex}`)
           }
           .padding({
