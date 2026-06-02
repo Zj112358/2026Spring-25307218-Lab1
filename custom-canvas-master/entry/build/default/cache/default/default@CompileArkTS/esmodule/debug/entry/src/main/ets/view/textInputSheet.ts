@@ -177,8 +177,8 @@ export class textInputSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             TextArea.create({ text: this.textContent, placeholder: '请输入文字' });
             TextArea.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            TextArea.height(80);
-            TextArea.fontSize(16);
+            TextArea.height({ "id": 16777337, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            TextArea.fontSize({ "id": 16777336, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             TextArea.onChange((value: string) => {
                 this.textContent = value;
             });
@@ -208,14 +208,14 @@ export class textInputSheet extends ViewPU {
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Column.create();
-            Column.width(80);
+            Column.width({ "id": 16777328, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Column.borderRadius(6);
             Column.clip(true);
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Row.height(28);
+            Row.height({ "id": 16777332, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Row.justifyContent(FlexAlign.Center);
             Row.backgroundColor('#333333');
             Row.borderRadius({ topLeft: 6, topRight: 6 });
@@ -226,15 +226,15 @@ export class textInputSheet extends ViewPU {
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Image.create({ "id": 125830089, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width(16);
-            Image.height(16);
+            Image.width({ "id": 16777330, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777330, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Image.fillColor(Color.White);
         }, Image);
         Row.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             List.create({ space: 0, scroller: this.scroller, initialIndex: this.selectedFontIndex });
             List.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            List.height(120);
+            List.height({ "id": 16777325, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             List.backgroundColor('#333333');
             List.scrollBar(BarState.Off);
             List.edgeEffect(EdgeEffect.None);
@@ -260,7 +260,7 @@ export class textInputSheet extends ViewPU {
                         this.observeComponentCreation2((elmtId, isInitialRender) => {
                             Row.create();
                             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-                            Row.height(30);
+                            Row.height({ "id": 16777327, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                             Row.justifyContent(FlexAlign.Center);
                             Row.backgroundColor(this.selectedFontIndex === index ? '#4D4D4D' : '#333333');
                             Row.onClick(() => {
@@ -270,7 +270,7 @@ export class textInputSheet extends ViewPU {
                         }, Row);
                         this.observeComponentCreation2((elmtId, isInitialRender) => {
                             Text.create(item.label);
-                            Text.fontSize(14);
+                            Text.fontSize({ "id": 16777326, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                             Text.fontColor(this.selectedFontIndex === index ? '#0A59F7' : Color.White);
                             Text.fontWeight(this.selectedFontIndex === index ? FontWeight.Bold : FontWeight.Normal);
                         }, Text);
@@ -289,7 +289,7 @@ export class textInputSheet extends ViewPU {
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Row.create();
             Row.width(CommonConstants.ONE_HUNDRED_PERCENT);
-            Row.height(28);
+            Row.height({ "id": 16777332, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Row.justifyContent(FlexAlign.Center);
             Row.backgroundColor('#333333');
             Row.borderRadius({ bottomLeft: 6, bottomRight: 6 });
@@ -300,8 +300,8 @@ export class textInputSheet extends ViewPU {
         }, Row);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Image.create({ "id": 125830090, "type": 20000, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
-            Image.width(16);
-            Image.height(16);
+            Image.width({ "id": 16777330, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Image.height({ "id": 16777330, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Image.fillColor(Color.White);
         }, Image);
         Row.pop();
@@ -312,23 +312,23 @@ export class textInputSheet extends ViewPU {
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width(48);
-            Stack.height(36);
+            Stack.width({ "id": 16777318, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777316, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Stack.onClick(() => {
                 this.textFontWeight = this.textFontWeight === FontWeight.Bold ? FontWeight.Normal : FontWeight.Bold;
             });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create();
-            Text.width(48);
-            Text.height(36);
-            Text.borderRadius(8);
+            Text.width({ "id": 16777318, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777316, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777317, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.backgroundColor(this.textFontWeight === FontWeight.Bold ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create('B');
-            Text.fontSize(18);
+            Text.fontSize({ "id": 16777313, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontWeight(FontWeight.Bold);
             Text.fontColor(this.textFontWeight === FontWeight.Bold ? Color.White : Color.Black);
         }, Text);
@@ -341,23 +341,23 @@ export class textInputSheet extends ViewPU {
         }, Column);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Stack.create();
-            Stack.width(48);
-            Stack.height(36);
+            Stack.width({ "id": 16777318, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Stack.height({ "id": 16777316, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Stack.onClick(() => {
                 this.textFontStyle = this.textFontStyle === FontStyle.Italic ? FontStyle.Normal : FontStyle.Italic;
             });
         }, Stack);
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create();
-            Text.width(48);
-            Text.height(36);
-            Text.borderRadius(8);
+            Text.width({ "id": 16777318, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.height({ "id": 16777316, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+            Text.borderRadius({ "id": 16777317, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.backgroundColor(this.textFontStyle === FontStyle.Italic ? { "id": 16777261, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" } : '#F1F3F5');
         }, Text);
         Text.pop();
         this.observeComponentCreation2((elmtId, isInitialRender) => {
             Text.create('I');
-            Text.fontSize(18);
+            Text.fontSize({ "id": 16777313, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontStyle(FontStyle.Italic);
             Text.fontColor(this.textFontStyle === FontStyle.Italic ? Color.White : Color.Black);
         }, Text);
@@ -368,7 +368,7 @@ export class textInputSheet extends ViewPU {
             Text.create(FONT_SIZE_LIST[this.selectedFontIndex].size % 1 === 0 ?
                 FONT_SIZE_LIST[this.selectedFontIndex].size.toFixed(0) :
                 FONT_SIZE_LIST[this.selectedFontIndex].size.toString());
-            Text.fontSize(11);
+            Text.fontSize({ "id": 16777331, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.fontColor({ "id": 125830998, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Text.margin({ left: 8 });
         }, Text);
@@ -402,16 +402,16 @@ export class textInputSheet extends ViewPU {
                 const item = _item;
                 this.observeComponentCreation2((elmtId, isInitialRender) => {
                     Stack.create();
-                    Stack.width(26);
-                    Stack.height(20);
+                    Stack.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                    Stack.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                     Stack.onClick(() => {
                         this.textColor = item;
                     });
                 }, Stack);
                 this.observeComponentCreation2((elmtId, isInitialRender) => {
                     Text.create();
-                    Text.width(26);
-                    Text.height(20);
+                    Text.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                    Text.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                     Text.backgroundColor(item);
                 }, Text);
                 Text.pop();
@@ -421,8 +421,8 @@ export class textInputSheet extends ViewPU {
                         this.ifElseBranchUpdateFunction(0, () => {
                             this.observeComponentCreation2((elmtId, isInitialRender) => {
                                 Text.create();
-                                Text.width(26);
-                                Text.height(20);
+                                Text.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                                Text.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                                 Text.borderWidth(2);
                                 Text.borderColor(Color.White);
                             }, Text);
@@ -455,16 +455,16 @@ export class textInputSheet extends ViewPU {
                         const item = _item;
                         this.observeComponentCreation2((elmtId, isInitialRender) => {
                             Stack.create();
-                            Stack.width(26);
-                            Stack.height(20);
+                            Stack.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                            Stack.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                             Stack.onClick(() => {
                                 this.textColor = item;
                             });
                         }, Stack);
                         this.observeComponentCreation2((elmtId, isInitialRender) => {
                             Text.create();
-                            Text.width(26);
-                            Text.height(20);
+                            Text.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                            Text.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                             Text.backgroundColor(item);
                         }, Text);
                         Text.pop();
@@ -474,8 +474,8 @@ export class textInputSheet extends ViewPU {
                                 this.ifElseBranchUpdateFunction(0, () => {
                                     this.observeComponentCreation2((elmtId, isInitialRender) => {
                                         Text.create();
-                                        Text.width(26);
-                                        Text.height(20);
+                                        Text.width({ "id": 16777320, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
+                                        Text.height({ "id": 16777319, "type": 10002, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
                                         Text.borderWidth(2);
                                         Text.borderColor(Color.White);
                                     }, Text);

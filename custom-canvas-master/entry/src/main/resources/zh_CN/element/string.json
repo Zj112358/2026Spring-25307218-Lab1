@@ -152,6 +152,22 @@
     {
       "name": "font_style_label",
       "value": "样式"
+    },
+    {
+      "name": "syncing",
+      "value": "同步中"
+    },
+    {
+      "name": "synced",
+      "value": "已同步"
+    },
+    {
+      "name": "version",
+      "value": "版本"
+    },
+    {
+      "name": "save",
+      "value": "保存"
     }
   ]
 }

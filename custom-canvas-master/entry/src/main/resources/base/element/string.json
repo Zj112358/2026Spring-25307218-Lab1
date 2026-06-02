@@ -152,6 +152,46 @@
     {
       "name": "font_style_label",
       "value": "样式"
+    },
+    {
+      "name": "syncing",
+      "value": "同步中"
+    },
+    {
+      "name": "synced",
+      "value": "已同步"
+    },
+    {
+      "name": "version",
+      "value": "版本"
+    },
+    {
+      "name": "save",
+      "value": "保存"
+    },
+    {
+      "name": "send_to_device",
+      "value": "发送到设备"
+    },
+    {
+      "name": "device_picker_title",
+      "value": "选择设备"
+    },
+    {
+      "name": "no_device_found",
+      "value": "未发现可用设备"
+    },
+    {
+      "name": "connect_device",
+      "value": "连接"
+    },
+    {
+      "name": "disconnect_device",
+      "value": "断开"
+    },
+    {
+      "name": "distributed_datasync_reason",
+      "value": "用于跨设备同步画布数据"
     }
   ]
 }

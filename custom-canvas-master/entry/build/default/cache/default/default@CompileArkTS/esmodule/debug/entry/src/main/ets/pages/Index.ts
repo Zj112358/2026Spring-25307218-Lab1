@@ -57,10 +57,11 @@ interface DrawCanvas_Params {
     offCanvasReady?: boolean;
     shapeStartX?: number;
     shapeStartY?: number;
+    distributedCanvas?: DistributedCanvas;
 }
 import display from "@ohos:display";
 import DrawInvoker from "@bundle:com.example.customcanvas/entry/ets/viewmodel/DrawInvoker";
-import DrawPath, { ShapeDraw, TextDraw } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IDraw";
+import DrawPath, { ShapeDraw, TextDraw, TouchPointData } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IDraw";
 import type { IBrush } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
 import NormalBrush from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
 import { FountainPenBrush } from "@bundle:com.example.customcanvas/entry/ets/viewmodel/IBrush";
@@ -70,6 +71,9 @@ import { myPaintSheet } from "@bundle:com.example.customcanvas/entry/ets/view/my
 import { textInputSheet } from "@bundle:com.example.customcanvas/entry/ets/view/textInputSheet";
 import hilog from "@ohos:hilog";
 import type { BusinessError } from "@ohos:base";
+import DistributedCanvas from "@bundle:com.example.customcanvas/entry/ets/viewmodel/DistributedCanvas";
+import { CONTINUE_DRAW_DATA, CONTINUE_SELECTED_INDEX, CONTINUE_SCALE_X, CONTINUE_SCALE_Y, CONTINUE_SHAPE_TOOL, CONTINUE_IS_PAINT, CONTINUE_IS_ERASER, CONTINUE_ERROR } from "@bundle:com.example.customcanvas/entry/ets/entryability/EntryAbility";
+import type { Context } from "@ohos:abilityAccessCtrl";
 class DrawCanvas extends ViewPU {
     constructor(parent, params, __localStorage, elmtId = -1, paramsLambda = undefined, extraInfo) {
         super(parent, __localStorage, elmtId, extraInfo);
@@ -133,6 +137,7 @@ class DrawCanvas extends ViewPU {
         this.offCanvasReady = false;
         this.shapeStartX = 0;
         this.shapeStartY = 0;
+        this.distributedCanvas = new DistributedCanvas();
         this.setInitiallyProvidedValue(params);
         this.declareWatch("isDrawing", this.createDraw);
         this.finalizeConstruction();
@@ -302,6 +307,9 @@ class DrawCanvas extends ViewPU {
         }
         if (params.shapeStartY !== undefined) {
             this.shapeStartY = params.shapeStartY;
+        }
+        if (params.distributedCanvas !== undefined) {
+            this.distributedCanvas = params.distributedCanvas;
         }
     }
     updateStateVars(params: DrawCanvas_Params) {
@@ -671,12 +679,45 @@ class DrawCanvas extends ViewPU {
     private offCanvasReady: boolean;
     private shapeStartX: number;
     private shapeStartY: number;
+    private distributedCanvas: DistributedCanvas;
     aboutToAppear(): void {
         this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
         this.mPaint.setStrokeWidth(CommonConstants.THREE);
         this.mPaint.setColor(CommonConstants.BLACK);
         this.mPaint.setGlobalAlpha(CommonConstants.ONE);
         this.mBrush = new NormalBrush();
+        this.distributedCanvas.init(getContext(this) as Context, this.drawInvoker, () => {
+            this.refreshOffCanvas();
+            this.clearTopCanvas();
+        });
+        this.distributedCanvas.startListening();
+        let restoreError = AppStorage.get<string>(CONTINUE_ERROR);
+        if (restoreError) {
+            hilog.error(0x0000, 'Index', `Restore error: ${restoreError}`);
+            AppStorage.setOrCreate(CONTINUE_ERROR, '');
+        }
+        let drawData = AppStorage.get<string>(CONTINUE_DRAW_DATA) ?? '';
+        if (drawData.length > 0) {
+            try {
+                this.drawInvoker.deserializeAll(drawData);
+                this.refreshOffCanvas();
+            }
+            catch (error) {
+                hilog.error(0x0000, 'Index', `Failed to restore draw data`);
+            }
+        }
+        this.selectedIndex = AppStorage.get<number>(CONTINUE_SELECTED_INDEX) ?? -1;
+        let scaleX = AppStorage.get<number>(CONTINUE_SCALE_X) ?? 1;
+        let scaleY = AppStorage.get<number>(CONTINUE_SCALE_Y) ?? 1;
+        if (scaleX !== 1 || scaleY !== 1) {
+            this.scaleValueX = scaleX;
+            this.scaleValueY = scaleY;
+            this.pinchValueX = scaleX;
+            this.pinchValueY = scaleY;
+        }
+        this.shapeTool = AppStorage.get<string>(CONTINUE_SHAPE_TOOL) ?? '';
+        this.isPaint = AppStorage.get<boolean>(CONTINUE_IS_PAINT) ?? false;
+        this.isEraser = AppStorage.get<boolean>(CONTINUE_IS_ERASER) ?? false;
         try {
             display.on('foldStatusChange', (data: display.FoldStatus) => {
                 if (data === 2) {
@@ -702,6 +743,16 @@ class DrawCanvas extends ViewPU {
             hilog.error(0x0000, 'Index', `listen foldStatusChange failed. code=${err.code}, message=${err.message}`);
         }
     }
+    aboutToDisappear(): void {
+        this.distributedCanvas.stopListening();
+        AppStorage.setOrCreate(CONTINUE_DRAW_DATA, this.drawInvoker.serializeAll());
+        AppStorage.setOrCreate(CONTINUE_SELECTED_INDEX, this.selectedIndex);
+        AppStorage.setOrCreate(CONTINUE_SCALE_X, this.scaleValueX);
+        AppStorage.setOrCreate(CONTINUE_SCALE_Y, this.scaleValueY);
+        AppStorage.setOrCreate(CONTINUE_SHAPE_TOOL, this.shapeTool);
+        AppStorage.setOrCreate(CONTINUE_IS_PAINT, this.isPaint);
+        AppStorage.setOrCreate(CONTINUE_IS_ERASER, this.isEraser);
+    }
     createDraw() {
         if (this.isDrawing) {
             this.clearTopCanvas();
@@ -712,9 +763,11 @@ class DrawCanvas extends ViewPU {
         if (!this.offCanvasReady)
             return;
         this.offContext.clearRect(0, 0, this.offContext.width, this.offContext.height);
+        this.drawInvoker.execute(this.offContext);
+        this.offContext.globalCompositeOperation = 'destination-over';
         this.offContext.fillStyle = Color.White;
         this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
-        this.drawInvoker.execute(this.offContext);
+        this.offContext.globalCompositeOperation = 'source-over';
     }
     appendToOffCanvas(path: DrawPath): void {
         if (!this.offCanvasReady)
@@ -840,6 +893,7 @@ class DrawCanvas extends ViewPU {
     }
     deleteSelected(): void {
         if (this.selectedIndex >= 0) {
+            this.distributedCanvas.publishDelete(this.selectedIndex);
             this.drawInvoker.removeAt(this.selectedIndex);
             this.selectedIndex = -1;
             this.showShapeMenu = false;
@@ -868,6 +922,7 @@ class DrawCanvas extends ViewPU {
      */
     add(path: DrawPath): void {
         this.drawInvoker.add(path);
+        this.distributedCanvas.publishAdd(path);
     }
     /**
      * Toggle weight, color, transparency.
@@ -911,6 +966,7 @@ class DrawCanvas extends ViewPU {
      */
     clear(): void {
         this.drawInvoker.clear();
+        this.distributedCanvas.publishClear();
         this.selectedIndex = -1;
         this.showShapeMenu = false;
         this.selectAction = '';
@@ -979,7 +1035,7 @@ class DrawCanvas extends ViewPU {
                         textFontWeight: this.__textFontWeight,
                         textFontStyle: this.__textFontStyle,
                         textColor: this.__textColor
-                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 390, col: 7 });
+                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 443, col: 7 });
                     ViewPU.create(componentCall);
                     let paramsLambda = () => {
                         return {
@@ -1014,7 +1070,7 @@ class DrawCanvas extends ViewPU {
                         percent: this.__percent,
                         color: this.__color,
                         strokeWidth: this.__strokeWidth
-                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 405, col: 7 });
+                    }, undefined, elmtId, () => { }, { page: "entry/src/main/ets/pages/Index.ets", line: 458, col: 7 });
                     ViewPU.create(componentCall);
                     let paramsLambda = () => {
                         return {
@@ -1650,8 +1706,6 @@ class DrawCanvas extends ViewPU {
             Canvas.backgroundColor({ "id": 125831026, "type": 10001, params: [], "bundleName": "com.example.customcanvas", "moduleName": "entry" });
             Canvas.onReady(() => {
                 this.offCanvasReady = true;
-                this.offContext.fillStyle = Color.White;
-                this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
             });
         }, Canvas);
         Canvas.pop();
@@ -1739,6 +1793,7 @@ class DrawCanvas extends ViewPU {
                                 let element = this.drawInvoker.getAt(this.selectedIndex);
                                 if (element !== null) {
                                     element.rotateBy(deltaAngle);
+                                    this.distributedCanvas.publishRotate(this.selectedIndex, element);
                                     this.selectDragStartX = touch.x;
                                     this.selectDragStartY = touch.y;
                                     this.refreshOffCanvas();
@@ -1753,6 +1808,7 @@ class DrawCanvas extends ViewPU {
                                 let element = this.drawInvoker.getAt(this.selectedIndex);
                                 if (element !== null) {
                                     element.moveBy(dx, dy);
+                                    this.distributedCanvas.publishMove(this.selectedIndex, element);
                                     this.selectDragStartX = touch.x;
                                     this.selectDragStartY = touch.y;
                                     this.refreshOffCanvas();
@@ -1890,6 +1946,10 @@ class DrawCanvas extends ViewPU {
                     this.mPath.paint = this.mPaint;
                     this.mPath.path = new Path2D();
                     this.mBrush.down(this.mPath.path, touch.x, touch.y);
+                    let tp0 = new TouchPointData();
+                    tp0.x = touch.x;
+                    tp0.y = touch.y;
+                    this.mPath.touchPoints.push(tp0);
                     this.mPath.updateBounds(touch.x, touch.y);
                 }
                 if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Move) {
@@ -1902,6 +1962,7 @@ class DrawCanvas extends ViewPU {
                         let element = this.drawInvoker.getAt(this.selectedIndex);
                         if (element !== null) {
                             element.rotateBy(deltaAngle);
+                            this.distributedCanvas.publishRotate(this.selectedIndex, element);
                             this.selectDragStartX = touch.x;
                             this.selectDragStartY = touch.y;
                             this.refreshOffCanvas();
@@ -1917,6 +1978,7 @@ class DrawCanvas extends ViewPU {
                             let element = this.drawInvoker.getAt(this.selectedIndex);
                             if (element !== null) {
                                 element.moveBy(dx, dy);
+                                this.distributedCanvas.publishMove(this.selectedIndex, element);
                                 this.selectDragStartX = touch.x;
                                 this.selectDragStartY = touch.y;
                                 this.refreshOffCanvas();
@@ -1933,6 +1995,7 @@ class DrawCanvas extends ViewPU {
                         let element = this.drawInvoker.getAt(this.selectedIndex);
                         if (element !== null) {
                             element.moveBy(dx, dy);
+                            this.distributedCanvas.publishMove(this.selectedIndex, element);
                             this.selectDragStartX = touch.x;
                             this.selectDragStartY = touch.y;
                             this.refreshOffCanvas();
@@ -1941,13 +2004,25 @@ class DrawCanvas extends ViewPU {
                         return;
                     }
                     this.mBrush.move(this.mPath.path, event.touches[0].x, event.touches[0].y);
+                    let tp1 = new TouchPointData();
+                    tp1.x = event.touches[0].x;
+                    tp1.y = event.touches[0].y;
+                    this.mPath.touchPoints.push(tp1);
                     this.mPath.updateBounds(event.touches[0].x, event.touches[0].y);
                     if (this.isFountainPen && this.mBrush instanceof FountainPenBrush) {
                         this.mPath.isFountainPen = true;
                         this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points;
                     }
                     this.clearTopCanvas();
-                    if (this.isFountainPen || this.arr.length > 4) {
+                    if (this.mPaint.isEraser) {
+                        this.refreshOffCanvas();
+                        this.mPath.draw(this.offContext);
+                        this.offContext.globalCompositeOperation = 'destination-over';
+                        this.offContext.fillStyle = Color.White;
+                        this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
+                        this.offContext.globalCompositeOperation = 'source-over';
+                    }
+                    else if (this.isFountainPen || this.arr.length > 4) {
                         this.mPath.draw(this.context);
                     }
                 }
@@ -1961,7 +2036,12 @@ class DrawCanvas extends ViewPU {
                         this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points.slice();
                     }
                     this.add(this.mPath);
-                    this.appendToOffCanvas(this.mPath);
+                    if (this.mPaint.isEraser) {
+                        this.refreshOffCanvas();
+                    }
+                    else {
+                        this.appendToOffCanvas(this.mPath);
+                    }
                     this.clearTopCanvas();
                     this.arr = [];
                     this.redoDraw = false;
@@ -2196,11 +2276,13 @@ class DrawCanvas extends ViewPU {
             Button.onClick(() => {
                 this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
                 this.mPaint.setStrokeWidth(this.eraserWidth);
-                this.mPaint.setColor(CommonConstants.WHITE);
-                this.mPaint.setGlobalAlpha(CommonConstants.ONE);
+                this.mPaint.setEraser(true);
                 this.isPaint = false;
                 this.isEraser = true;
                 this.isEraserShow = !this.isEraserShow;
+                this.isShow = false;
+                this.isShapeShow = false;
+                this.shapeTool = '';
             });
         }, Button);
         Button.pop();

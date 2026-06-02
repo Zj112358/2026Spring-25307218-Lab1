@@ -15,7 +15,7 @@
 
 import { display } from '@kit.ArkUI';
 import DrawInvoker from '../viewmodel/DrawInvoker';
-import DrawPath, { ShapeDraw, TextDraw } from '../viewmodel/IDraw';
+import DrawPath, { ShapeDraw, TextDraw, TouchPointData } from '../viewmodel/IDraw';
 import { IBrush } from '../viewmodel/IBrush';
 import NormalBrush from '../viewmodel/IBrush';
 import { FountainPenBrush } from '../viewmodel/IBrush';
@@ -25,6 +25,11 @@ import { myPaintSheet } from '../view/myPaintSheet';
 import { textInputSheet } from '../view/textInputSheet';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { BusinessError } from '@kit.BasicServicesKit';
+import DistributedCanvas from '../viewmodel/DistributedCanvas';
+import { CONTINUE_DRAW_DATA, CONTINUE_SELECTED_INDEX, CONTINUE_SCALE_X, CONTINUE_SCALE_Y,
+  CONTINUE_SHAPE_TOOL, CONTINUE_IS_PAINT, CONTINUE_IS_ERASER, RESTORE_KEY, CONTINUE_ERROR }
+  from '../entryability/EntryAbility';
+import { Context } from '@kit.AbilityKit';
 
 @Entry
 @Component
@@ -84,6 +89,7 @@ struct DrawCanvas {
   private offCanvasReady: boolean = false;
   private shapeStartX: number = 0;
   private shapeStartY: number = 0;
+  private distributedCanvas: DistributedCanvas = new DistributedCanvas();
 
 
   aboutToAppear(): void {
@@ -92,6 +98,37 @@ struct DrawCanvas {
     this.mPaint.setColor(CommonConstants.BLACK);
     this.mPaint.setGlobalAlpha(CommonConstants.ONE);
     this.mBrush = new NormalBrush();
+    this.distributedCanvas.init(getContext(this) as Context, this.drawInvoker, () => {
+      this.refreshOffCanvas();
+      this.clearTopCanvas();
+    });
+    this.distributedCanvas.startListening();
+    let restoreError = AppStorage.get<string>(CONTINUE_ERROR);
+    if (restoreError) {
+      hilog.error(0x0000, 'Index', `Restore error: ${restoreError}`);
+      AppStorage.setOrCreate(CONTINUE_ERROR, '');
+    }
+    let drawData = AppStorage.get<string>(CONTINUE_DRAW_DATA) ?? '';
+    if (drawData.length > 0) {
+      try {
+        this.drawInvoker.deserializeAll(drawData);
+        this.refreshOffCanvas();
+      } catch (error) {
+        hilog.error(0x0000, 'Index', `Failed to restore draw data`);
+      }
+    }
+    this.selectedIndex = AppStorage.get<number>(CONTINUE_SELECTED_INDEX) ?? -1;
+    let scaleX = AppStorage.get<number>(CONTINUE_SCALE_X) ?? 1;
+    let scaleY = AppStorage.get<number>(CONTINUE_SCALE_Y) ?? 1;
+    if (scaleX !== 1 || scaleY !== 1) {
+      this.scaleValueX = scaleX;
+      this.scaleValueY = scaleY;
+      this.pinchValueX = scaleX;
+      this.pinchValueY = scaleY;
+    }
+    this.shapeTool = AppStorage.get<string>(CONTINUE_SHAPE_TOOL) ?? '';
+    this.isPaint = AppStorage.get<boolean>(CONTINUE_IS_PAINT) ?? false;
+    this.isEraser = AppStorage.get<boolean>(CONTINUE_IS_ERASER) ?? false;
     try {
       display.on('foldStatusChange', (data: display.FoldStatus) => {
         if (data === 2) {
@@ -116,6 +153,17 @@ struct DrawCanvas {
     }
   }
 
+  aboutToDisappear(): void {
+    this.distributedCanvas.stopListening();
+    AppStorage.setOrCreate(CONTINUE_DRAW_DATA, this.drawInvoker.serializeAll());
+    AppStorage.setOrCreate(CONTINUE_SELECTED_INDEX, this.selectedIndex);
+    AppStorage.setOrCreate(CONTINUE_SCALE_X, this.scaleValueX);
+    AppStorage.setOrCreate(CONTINUE_SCALE_Y, this.scaleValueY);
+    AppStorage.setOrCreate(CONTINUE_SHAPE_TOOL, this.shapeTool);
+    AppStorage.setOrCreate(CONTINUE_IS_PAINT, this.isPaint);
+    AppStorage.setOrCreate(CONTINUE_IS_ERASER, this.isEraser);
+  }
+
   createDraw() {
     if (this.isDrawing) {
       this.clearTopCanvas();
@@ -126,9 +174,11 @@ struct DrawCanvas {
   refreshOffCanvas(): void {
     if (!this.offCanvasReady) return;
     this.offContext.clearRect(0, 0, this.offContext.width, this.offContext.height);
+    this.drawInvoker.execute(this.offContext);
+    this.offContext.globalCompositeOperation = 'destination-over';
     this.offContext.fillStyle = Color.White;
     this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
-    this.drawInvoker.execute(this.offContext);
+    this.offContext.globalCompositeOperation = 'source-over';
   }
 
   appendToOffCanvas(path: DrawPath): void {
@@ -252,6 +302,7 @@ struct DrawCanvas {
 
   deleteSelected(): void {
     if (this.selectedIndex >= 0) {
+      this.distributedCanvas.publishDelete(this.selectedIndex);
       this.drawInvoker.removeAt(this.selectedIndex);
       this.selectedIndex = -1;
       this.showShapeMenu = false;
@@ -282,6 +333,7 @@ struct DrawCanvas {
    */
   add(path: DrawPath): void {
     this.drawInvoker.add(path);
+    this.distributedCanvas.publishAdd(path);
   }
 
   /**
@@ -328,6 +380,7 @@ struct DrawCanvas {
    */
   clear(): void {
     this.drawInvoker.clear();
+    this.distributedCanvas.publishClear();
     this.selectedIndex = -1;
     this.showShapeMenu = false;
     this.selectAction = '';
@@ -841,8 +894,6 @@ struct DrawCanvas {
         .backgroundColor($r('sys.color.white'))
         .onReady(() => {
           this.offCanvasReady = true;
-          this.offContext.fillStyle = Color.White;
-          this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
         })
 
       Canvas(this.context)
@@ -927,6 +978,7 @@ struct DrawCanvas {
                   let element = this.drawInvoker.getAt(this.selectedIndex);
                   if (element !== null) {
                     element.rotateBy(deltaAngle);
+                    this.distributedCanvas.publishRotate(this.selectedIndex, element);
                     this.selectDragStartX = touch.x;
                     this.selectDragStartY = touch.y;
                     this.refreshOffCanvas();
@@ -941,6 +993,7 @@ struct DrawCanvas {
                   let element = this.drawInvoker.getAt(this.selectedIndex);
                   if (element !== null) {
                     element.moveBy(dx, dy);
+                    this.distributedCanvas.publishMove(this.selectedIndex, element);
                     this.selectDragStartX = touch.x;
                     this.selectDragStartY = touch.y;
                     this.refreshOffCanvas();
@@ -1076,6 +1129,10 @@ struct DrawCanvas {
             this.mPath.paint = this.mPaint;
             this.mPath.path = new Path2D();
             this.mBrush.down(this.mPath.path, touch.x, touch.y);
+            let tp0 = new TouchPointData();
+            tp0.x = touch.x;
+            tp0.y = touch.y;
+            this.mPath.touchPoints.push(tp0);
             this.mPath.updateBounds(touch.x, touch.y);
           }
           if (event.touches.length === 1 && event.touches[0].id === 0 && event.type === TouchType.Move) {
@@ -1088,6 +1145,7 @@ struct DrawCanvas {
               let element = this.drawInvoker.getAt(this.selectedIndex);
               if (element !== null) {
                 element.rotateBy(deltaAngle);
+                this.distributedCanvas.publishRotate(this.selectedIndex, element);
                 this.selectDragStartX = touch.x;
                 this.selectDragStartY = touch.y;
                 this.refreshOffCanvas();
@@ -1103,6 +1161,7 @@ struct DrawCanvas {
                 let element = this.drawInvoker.getAt(this.selectedIndex);
                 if (element !== null) {
                   element.moveBy(dx, dy);
+                  this.distributedCanvas.publishMove(this.selectedIndex, element);
                   this.selectDragStartX = touch.x;
                   this.selectDragStartY = touch.y;
                   this.refreshOffCanvas();
@@ -1119,6 +1178,7 @@ struct DrawCanvas {
               let element = this.drawInvoker.getAt(this.selectedIndex);
               if (element !== null) {
                 element.moveBy(dx, dy);
+                this.distributedCanvas.publishMove(this.selectedIndex, element);
                 this.selectDragStartX = touch.x;
                 this.selectDragStartY = touch.y;
                 this.refreshOffCanvas();
@@ -1127,13 +1187,24 @@ struct DrawCanvas {
               return;
             }
             this.mBrush.move(this.mPath.path, event.touches[0].x, event.touches[0].y);
+            let tp1 = new TouchPointData();
+            tp1.x = event.touches[0].x;
+            tp1.y = event.touches[0].y;
+            this.mPath.touchPoints.push(tp1);
             this.mPath.updateBounds(event.touches[0].x, event.touches[0].y);
             if (this.isFountainPen && this.mBrush instanceof FountainPenBrush) {
               this.mPath.isFountainPen = true;
               this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points;
             }
             this.clearTopCanvas();
-            if (this.isFountainPen || this.arr.length > 4) {
+            if (this.mPaint.isEraser) {
+              this.refreshOffCanvas();
+              this.mPath.draw(this.offContext);
+              this.offContext.globalCompositeOperation = 'destination-over';
+              this.offContext.fillStyle = Color.White;
+              this.offContext.fillRect(0, 0, this.offContext.width, this.offContext.height);
+              this.offContext.globalCompositeOperation = 'source-over';
+            } else if (this.isFountainPen || this.arr.length > 4) {
               this.mPath.draw(this.context);
             }
           }
@@ -1147,7 +1218,11 @@ struct DrawCanvas {
               this.mPath.fountainPenPoints = (this.mBrush as FountainPenBrush).points.slice();
             }
             this.add(this.mPath);
-            this.appendToOffCanvas(this.mPath);
+            if (this.mPaint.isEraser) {
+              this.refreshOffCanvas();
+            } else {
+              this.appendToOffCanvas(this.mPath);
+            }
             this.clearTopCanvas();
             this.arr = [];
             this.redoDraw = false;
@@ -1323,11 +1398,13 @@ struct DrawCanvas {
             .onClick(() => {
               this.mPaint = new Paint(CommonConstants.ZERO, CommonConstants.COLOR_STRING, CommonConstants.ONE);
               this.mPaint.setStrokeWidth(this.eraserWidth);
-              this.mPaint.setColor(CommonConstants.WHITE);
-              this.mPaint.setGlobalAlpha(CommonConstants.ONE);
+              this.mPaint.setEraser(true);
               this.isPaint = false;
               this.isEraser = true;
               this.isEraserShow = !this.isEraserShow;
+              this.isShow = false;
+              this.isShapeShow = false;
+              this.shapeTool = '';
             })
         }
         .bindSheet($$this.isEraserShow, this.myEraserSheet(), {

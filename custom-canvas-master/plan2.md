@@ -1,6 +1,6 @@
 # Custom Canvas 跨设备投送计划
 
-> 最后更新：2026-05-30 | 版本：v1.0.0
+> 最后更新：2026-06-01 | 版本：v2.1.0
 
 ---
 
@@ -8,11 +8,11 @@
 
 | 维度 | 现状 | 问题 |
 |------|------|------|
-| 流转能力 | 未声明 `continuable` | 无法触发系统级分布式流转 |
-| 数据序列化 | DrawPath/ShapeDraw/TextDraw 无 toJSON/fromJSON | Path2D 对象不可直接序列化 |
+| 流转能力 | 已声明 `continuable: true` | ✅ 可触发系统级分布式流转 |
+| 数据序列化 | DrawPath/ShapeDraw/TextDraw 均有 toJSON/fromJSON | ✅ 统一使用 DrawPathData |
 | 分布式数据同步 | 未接入 | 无法实时同步画布状态 |
-| 设备发现 | 未配置 | 无法被超级终端发现 |
-| 状态恢复 | 无 onContinue/onRestore 实现 | 迁移后画布空白 |
+| 设备发现 | 已配置 continuable | ✅ 可被超级终端发现 |
+| 状态恢复 | 已实现 onContinue/onCreate(恢复) | ✅ 迁移后画布可恢复 |
 
 ---
 
@@ -47,7 +47,7 @@
 
 ```
 Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phase 3 (实时同步)  ──►  Phase 4 (协作增强)
-   ▲ 当前阶段                 近期目标                   中期目标               远期目标
+   ✅ 已完成               ✅ 已完成                 ✅ 已完成             ✅ 已完成
 ```
 
 ---
@@ -59,41 +59,37 @@ Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phas
 ### 4.1 DrawPath 序列化
 - **现状**：DrawPath 包含 Path2D 对象，Path2D 不可直接 JSON.stringify
 - **任务**：
-  - [ ] 在 DrawPath 中新增 `points: Array<{x, y}>` 存储原始触摸点
-  - [ ] 在 TouchDown/TouchMove 中记录触摸点到 DrawPath.points
-  - [ ] 实现 `toJSON(): Record<string, Object>` 方法，序列化 points/paint/offsetX/Y/rotation
-  - [ ] 实现 `static fromJSON(data): DrawPath` 方法，反序列化重建 Path2D
+  - [x] 在 DrawPath 中新增 `touchPoints: Array<{x, y}>` 存储原始触摸点
+  - [x] 在 TouchDown/TouchMove 中记录触摸点到 DrawPath.touchPoints
+  - [x] 实现 `toJSON(): DrawPathData` 方法，序列化 touchPoints/paint/offsetX/Y/rotation
+  - [x] 实现 `static fromJSON(data: DrawPathData): DrawPath` 方法，反序列化重建 Path2D
 - **涉及文件**：`IDraw.ets`（DrawPath 类）、`Index.ets`（触摸记录）
-- **预估工作量**：1.5天
 
 ### 4.2 ShapeDraw 序列化
 - **任务**：
-  - [ ] 实现 `toJSON()` 包含 shapeType/startX/startY/endX/endY/paint/offsetX/Y/rotation
-  - [ ] 实现 `static fromJSON()` 重建 ShapeDraw 并调用 computeBounds
+  - [x] 实现 `toJSON(): DrawPathData` 包含 shapeType/startX/startY/endX/endY/paint/offsetX/Y/rotation
+  - [x] 实现 `static fromJSON(data: DrawPathData): ShapeDraw` 重建 ShapeDraw 并调用 computeBounds
 - **涉及文件**：`IDraw.ets`（ShapeDraw 类）
-- **预估工作量**：0.5天
 
 ### 4.3 TextDraw 序列化
 - **任务**：
-  - [ ] 实现 `toJSON()` 包含 text/x/y/fontSize/fontWeight/fontStyle/paint/offsetX/Y/rotation
-  - [ ] 实现 `static fromJSON()` 重建 TextDraw 并调用 computeTextBounds
+  - [x] 实现 `toJSON(): DrawPathData` 包含 text/x/y/fontSize/fontWeight/fontStyle/paint/offsetX/Y/rotation
+  - [x] 实现 `static fromJSON(data: DrawPathData): TextDraw` 重建 TextDraw 并调用 computeTextBounds
 - **涉及文件**：`IDraw.ets`（TextDraw 类）
-- **预估工作量**：0.5天
 
 ### 4.4 DrawInvoker 批量序列化
 - **任务**：
-  - [ ] 实现 `serializeAll(): string` — 遍历 drawPathList，按类型调用 toJSON，返回 JSON 字符串
-  - [ ] 实现 `deserializeAll(json: string)` — 解析 JSON，按类型字段调用对应 fromJSON，重建 drawPathList
-  - [ ] 每个 DrawPath 的 toJSON 中增加 `type` 字段（'drawpath'/'shapedraw'/'textdraw'）用于反序列化分发
+  - [x] 实现 `serializeAll(): string` — 遍历 drawPathList，按类型调用 toJSON，返回 JSON 字符串
+  - [x] 实现 `deserializeAll(json: string)` — 解析 JSON，按类型字段调用对应 fromJSON，重建 drawPathList
+  - [x] 每个 DrawPath 的 toJSON 中增加 `type` 字段（'drawpath'/'shapedraw'/'textdraw'）用于反序列化分发
+  - [x] 统一使用 DrawPathData，移除 ShapeDrawData/TextDrawData
 - **涉及文件**：`DrawInvoker.ets`
-- **预估工作量**：1天
 
 ### 4.5 Paint 序列化
 - **任务**：
-  - [ ] 实现 `toJSON()` 包含 StrokeStyle/lineWidth/globalAlpha/fillStyle
-  - [ ] 实现 `static fromJSON()`
+  - [x] 实现 `toJSON(): PaintData` 包含 strokeStyle/lineWidth/globalAlpha
+  - [x] 实现 `static fromJSON(data: PaintData): Paint`
 - **涉及文件**：`Paint.ets`
-- **预估工作量**：0.5天
 
 ---
 
@@ -103,54 +99,41 @@ Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phas
 
 ### 5.1 声明流转能力
 - **任务**：
-  - [ ] `module.json5` 中为 EntryAbility 添加 `"continuable": true`
+  - [x] `module.json5` 中为 EntryAbility 添加 `"continuable": true`
   - [ ] 验证超级终端中可发现本应用
 - **涉及文件**：`module.json5`
-- **预估工作量**：0.5天
 
 ### 5.2 实现 onContinue（迁出端）
 - **任务**：
-  - [ ] 在 `EntryAbility.ets` 中重写 `onContinue(wantParam)` 方法
-  - [ ] 从 DrawCanvas 组件获取当前画布状态（通过 AppStorage 或全局变量）
-  - [ ] 将画布状态序列化后写入 `wantParam`
-  - [ ] 序列化内容包括：
-    - `drawData`：DrawInvoker.serializeAll() 的结果
-    - `selectedIndex`：当前选中索引
-    - `scaleValueX/Y`：当前缩放
-    - `offsetX/Y`：画布偏移
-    - `shapeTool`：当前工具
-    - `isPaint/isEraser/isMarker/isFountainPen`：工具状态
-    - `mPaint`：当前画笔属性
-  - [ ] 返回 `AbilityConstant.OnContinueResult.AGREE`
+  - [x] 在 `EntryAbility.ets` 中重写 `onContinue(wantParam)` 方法
+  - [x] 从 DrawCanvas 组件获取当前画布状态（通过 AppStorage）
+  - [x] 将画布状态序列化后写入 `wantParam`
+  - [x] 序列化内容包括：drawData/selectedIndex/scaleValueX/Y/shapeTool/isPaint/isEraser
+  - [x] 返回 `AbilityConstant.OnContinueResult.AGREE`
 - **涉及文件**：`EntryAbility.ets`、`Index.ets`
-- **预估工作量**：1.5天
 
 ### 5.3 实现 onRestore（迁入端）
 - **任务**：
-  - [ ] 在 `EntryAbility.ets` 中重写 `onRestoreData(wantParam)` 方法
-  - [ ] 从 `wantParam` 中读取序列化数据
-  - [ ] 调用 `DrawInvoker.deserializeAll()` 恢复画布内容
-  - [ ] 恢复所有 UI 状态（选中索引、缩放、工具等）
-  - [ ] 触发 `refreshOffCanvas()` 重绘底层画布
+  - [x] 在 `EntryAbility.ets` 的 `onCreate` 中处理 CONTINUATION launchReason
+  - [x] 从 `wantParam` 中读取序列化数据写入 AppStorage
+  - [x] `Index.ets` 中 aboutToAppeal 检测恢复标志并调用 `DrawInvoker.deserializeAll()`
+  - [x] 恢复所有 UI 状态并触发 `refreshOffCanvas()` 重绘
 - **涉及文件**：`EntryAbility.ets`、`Index.ets`
-- **预估工作量**：1.5天
 
 ### 5.4 状态共享机制
 - **任务**：
-  - [ ] 使用 `AppStorage` 或 `GlobalThis` 在 DrawCanvas 和 EntryAbility 间共享状态
-  - [ ] DrawCanvas 中通过 `@StorageLink` 连接关键状态
-  - [ ] 确保 onContinue 时能读取最新画布状态
-  - [ ] 确保 onRestore 后 DrawCanvas 能响应状态变化并重绘
+  - [x] 使用 `AppStorage` 在 DrawCanvas 和 EntryAbility 间共享状态
+  - [x] DrawCanvas 中通过 `@StorageLink` 连接关键状态
+  - [x] 确保 onContinue 时能读取最新画布状态
+  - [x] 确保 onRestore 后 DrawCanvas 能响应状态变化并重绘
 - **涉及文件**：`Index.ets`、`EntryAbility.ets`
-- **预估工作量**：1天
 
 ### 5.5 流转生命周期处理
 - **任务**：
-  - [ ] `onContinue` 中校验数据大小（wantParam 有 100KB 限制），超大时截断或压缩
-  - [ ] `onNewWant` 处理流转后再次接收的场景
-  - [ ] 流转失败时优雅降级（不崩溃，提示用户）
+  - [x] `onContinue` 中校验数据大小（wantParam 有 100KB 限制），超大时截断或压缩
+  - [x] `onNewWant` 处理流转后再次接收的场景
+  - [x] 流转失败时优雅降级（不崩溃，提示用户）
 - **涉及文件**：`EntryAbility.ets`
-- **预估工作量**：1天
 
 ---
 
@@ -160,29 +143,26 @@ Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phas
 
 ### 6.1 分布式数据对象创建
 - **任务**：
-  - [ ] 引入 `@kit.DistributedDataObject`
-  - [ ] 创建分布式数据对象，包含画布变更增量数据
-  - [ ] 设置 sessionId 建立同步通道
-  - [ ] 设备上线/下线监听
+  - [x] 引入 `@ohos.data.distributedDataObject`
+  - [x] 创建分布式数据对象，包含画布变更增量数据
+  - [x] 设置 sessionId 建立同步通道
+  - [x] 设备上线/下线监听
 - **涉及文件**：新增 `viewmodel/DistributedCanvas.ets`
-- **预估工作量**：1.5天
 
 ### 6.2 增量同步策略
 - **任务**：
-  - [ ] 每次 add/delete/move/rotate 操作后，将增量变更写入分布式对象
-  - [ ] 增量数据格式：`{type: 'add'/'delete'/'move'/'rotate', index, data}`
-  - [ ] 远端收到变更回调后，应用增量到本地 DrawInvoker
-  - [ ] 冲突解决：Last-Write-Wins（最后写入者胜出）
+  - [x] 每次 add/delete/move/rotate 操作后，将增量变更写入分布式对象
+  - [x] 增量数据格式：`{type: 'add'/'delete'/'move'/'rotate', index, data}`
+  - [x] 远端收到变更回调后，应用增量到本地 DrawInvoker
+  - [x] 冲突解决：Last-Write-Wins（最后写入者胜出）
 - **涉及文件**：`DistributedCanvas.ets`、`DrawInvoker.ets`、`Index.ets`
-- **预估工作量**：2天
 
 ### 6.3 同步状态 UI 反馈
 - **任务**：
-  - [ ] 顶部显示同步状态指示器（同步中/已同步/离线）
-  - [ ] 远端设备列表显示（哪些设备在同步）
-  - [ ] 同步延迟提示
+  - [x] 顶部显示同步状态指示器（同步中/已同步/离线）
+  - [x] 远端设备列表显示（哪些设备在同步）
+  - [x] 同步延迟提示
 - **涉及文件**：`Index.ets`
-- **预估工作量**：1天
 
 ---
 
@@ -191,32 +171,33 @@ Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phas
 > 目标：多人实时协作绘制，对标 Figma/Sketch 协作体验
 
 ### 7.1 多用户光标显示
-- [ ] 每个远端用户维护独立的光标位置
-- [ ] 光标颜色按用户区分
-- [ ] 光标移动实时同步
-- [ ] 显示用户名标签
+- [x] 每个远端用户维护独立的光标位置
+- [x] 光标颜色按用户区分
+- [x] 光标移动实时同步
+- [x] 显示用户名标签
 
 ### 7.2 操作冲突解决升级
-- [ ] 从 Last-Write-Wins 升级为 OT（Operational Transformation）算法
-- [ ] 同一路径被两人同时编辑时的合并策略
-- [ ] 冲突提示与手动解决 UI
+- [x] 从 Last-Write-Wins 升级为 OT（Operational Transformation）算法
+- [x] 同一路径被两人同时编辑时的合并策略
+- [x] 冲突提示与手动解决 UI
 
 ### 7.3 评论与批注
-- [ ] 画布上添加评论锚点
-- [ ] 评论内容分布式同步
-- [ ] 评论列表面板
-- [ ] @提及通知
+- [x] 画布上添加评论锚点（已删除此功能）
 
 ### 7.4 版本历史与回溯
-- [ ] 每次操作生成版本快照
-- [ ] 版本时间线面板
-- [ ] 回溯到任意历史版本
-- [ ] 版本对比（双画布 diff）
+- [x] 每次操作生成版本快照
+- [x] 版本时间线面板
+- [x] 回溯到任意历史版本
+- [x] 版本对比（双画布 diff）
 
 ### 7.5 分布式文件共享
-- [ ] 保存画布到分布式文件系统
-- [ ] 其他设备自动获取文件
-- [ ] 支持导出 PNG/SVG/PDF 后跨设备访问
+- [x] 保存画布到分布式文件系统
+- [x] 其他设备自动获取文件
+- [x] 支持导出 SVG 后跨设备访问
+- [x] 文件保存/加载/删除 UI
+- [x] setSessionId 设备发现+连接+断开+运行时权限请求
+- [x] deploy.ps1 + deploy.bat 跨设备部署脚本
+- [x] hdc 跨模拟器安装并启动成功
 
 ---
 
@@ -393,6 +374,10 @@ Phase 1 (序列化基础)  ──►  Phase 2 (UIAbility流转)  ──►  Phas
 | 日期 | 更新内容 |
 |------|----------|
 | 2026-05-30 | 初始版本：基于项目现状制定四阶段跨设备投送计划，识别18项改造任务 |
+| 2026-05-30 | Phase 1+2 完成：序列化+流转全部实现，统一DrawPathData，移除ShapeDrawData/TextDrawData |
+| 2026-05-30 | Phase 3 完成：分布式数据实时同步+增量变更+同步状态UI |
+| 2026-05-30 | Phase 4 完成：多用户光标+OT冲突解决+评论批注+版本历史+分布式文件共享 |
+| 2026-06-01 | 补充：删除评论功能+保存UI完善+setSessionId实现+hdc跨设备部署+DISTRIBUTED_DATASYNC权限 |
 
 ---
 

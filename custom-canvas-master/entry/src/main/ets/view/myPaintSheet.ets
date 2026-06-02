@@ -194,7 +194,7 @@ export struct myPaintSheet {
             .fontSize($r('app.float.font_size'))
             .fontColor($r('sys.color.mask_secondary'))
           Text(this.colorMode === 0 ? $r('app.string.color_grid') : $r('app.string.rgb_slider'))
-            .fontSize(12)
+            .fontSize($r('app.float.rgb_label_font'))
             .fontColor($r('app.color.theme_color'))
             .margin({ left: 12 })
             .onClick(() => {
@@ -209,19 +209,19 @@ export struct myPaintSheet {
               ForEach(CommonConstants.COLOR_GRAY_ROW, (item: string) => {
                 Stack() {
                   Text()
-                    .width(26)
-                    .height(20)
+                    .width($r('app.float.color_grid_width'))
+                    .height($r('app.float.color_grid_height'))
                     .backgroundColor(item)
                   if (this.color === item) {
                     Text()
-                      .width(26)
-                      .height(20)
+                      .width($r('app.float.color_grid_width'))
+                      .height($r('app.float.color_grid_height'))
                       .borderWidth(2)
                       .borderColor(Color.White)
                   }
                 }
-                .width(26)
-                .height(20)
+                .width($r('app.float.color_grid_width'))
+                .height($r('app.float.color_grid_height'))
                 .onClick(() => {
                   this.color = item;
                   this.syncRgbFromColor();
@@ -236,19 +236,19 @@ export struct myPaintSheet {
                 ForEach(row, (item: string, colIndex: number) => {
                   Stack() {
                     Text()
-                      .width(26)
-                      .height(20)
+                      .width($r('app.float.color_grid_width'))
+                      .height($r('app.float.color_grid_height'))
                       .backgroundColor(item)
                     if (this.color === item) {
                       Text()
-                        .width(26)
-                        .height(20)
+                        .width($r('app.float.color_grid_width'))
+                        .height($r('app.float.color_grid_height'))
                         .borderWidth(2)
                         .borderColor(Color.White)
                     }
                   }
-                  .width(26)
-                  .height(20)
+                  .width($r('app.float.color_grid_width'))
+                  .height($r('app.float.color_grid_height'))
                   .onClick(() => {
                     this.color = item;
                     this.syncRgbFromColor();
@@ -268,9 +268,9 @@ export struct myPaintSheet {
           Column() {
             Row() {
               Text('R')
-                .fontSize(12)
+                .fontSize($r('app.float.rgb_label_font'))
                 .fontColor('#E90808')
-                .width(16)
+                .width($r('app.float.rgb_label_width'))
                 .textAlign(TextAlign.Center)
               Slider({ value: this.redValue, min: 0, max: 255 })
                 .width($r('app.float.slider_width'))
@@ -284,9 +284,9 @@ export struct myPaintSheet {
                   this.ToggleThicknessColor();
                 })
               Text(Math.round(this.redValue).toString())
-                .fontSize(11)
+                .fontSize($r('app.float.rgb_value_font'))
                 .fontColor($r('sys.color.mask_secondary'))
-                .width(28)
+                .width($r('app.float.rgb_value_width'))
                 .textAlign(TextAlign.Center)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
@@ -295,9 +295,9 @@ export struct myPaintSheet {
 
             Row() {
               Text('G')
-                .fontSize(12)
+                .fontSize($r('app.float.rgb_label_font'))
                 .fontColor('#63B959')
-                .width(16)
+                .width($r('app.float.rgb_label_width'))
                 .textAlign(TextAlign.Center)
               Slider({ value: this.greenValue, min: 0, max: 255 })
                 .width($r('app.float.slider_width'))
@@ -311,9 +311,9 @@ export struct myPaintSheet {
                   this.ToggleThicknessColor();
                 })
               Text(Math.round(this.greenValue).toString())
-                .fontSize(11)
+                .fontSize($r('app.float.rgb_value_font'))
                 .fontColor($r('sys.color.mask_secondary'))
-                .width(28)
+                .width($r('app.float.rgb_value_width'))
                 .textAlign(TextAlign.Center)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
@@ -323,9 +323,9 @@ export struct myPaintSheet {
 
             Row() {
               Text('B')
-                .fontSize(12)
+                .fontSize($r('app.float.rgb_label_font'))
                 .fontColor('#0A59F7')
-                .width(16)
+                .width($r('app.float.rgb_label_width'))
                 .textAlign(TextAlign.Center)
               Slider({ value: this.blueValue, min: 0, max: 255 })
                 .width($r('app.float.slider_width'))
@@ -339,9 +339,9 @@ export struct myPaintSheet {
                   this.ToggleThicknessColor();
                 })
               Text(Math.round(this.blueValue).toString())
-                .fontSize(11)
+                .fontSize($r('app.float.rgb_value_font'))
                 .fontColor($r('sys.color.mask_secondary'))
-                .width(28)
+                .width($r('app.float.rgb_value_width'))
                 .textAlign(TextAlign.Center)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
@@ -358,12 +358,12 @@ export struct myPaintSheet {
 
         Row() {
           Text($r('app.string.current_color'))
-            .fontSize(12)
+            .fontSize($r('app.float.rgb_label_font'))
             .fontColor($r('sys.color.mask_secondary'))
           Text()
-            .width(18)
-            .height(18)
-            .borderRadius(9)
+            .width($r('app.float.color_preview_size'))
+            .height($r('app.float.color_preview_size'))
+            .borderRadius($r('app.float.color_preview_radius'))
             .backgroundColor(this.color)
             .borderWidth(1)
             .borderColor('#D9D9D9')
@@ -447,8 +447,8 @@ export struct myPaintSheet {
               this.ToggleThicknessColor();
             })
           Text(this.strokeWidth.toFixed(0))
-            .width(28)
-            .fontSize(11)
+            .width($r('app.float.rgb_value_width'))
+            .fontSize($r('app.float.rgb_value_font'))
             .fontColor($r('sys.color.mask_secondary'))
             .textAlign(TextAlign.Center)
         }

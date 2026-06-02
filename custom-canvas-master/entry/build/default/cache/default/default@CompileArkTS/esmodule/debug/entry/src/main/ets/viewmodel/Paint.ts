@@ -16,10 +16,12 @@ export default class Paint {
     lineWidth: number;
     StrokeStyle: string;
     globalAlpha: number;
-    constructor(lineWidth: number, StrokeStyle: string, globalAlpha: number) {
+    isEraser: boolean;
+    constructor(lineWidth: number, StrokeStyle: string, globalAlpha: number, isEraser?: boolean) {
         this.lineWidth = lineWidth;
         this.StrokeStyle = StrokeStyle;
         this.globalAlpha = globalAlpha;
+        this.isEraser = isEraser ?? false;
     }
     setColor(color: string) {
         this.StrokeStyle = color;
@@ -30,4 +32,24 @@ export default class Paint {
     setGlobalAlpha(alpha: number) {
         this.globalAlpha = alpha;
     }
+    setEraser(isEraser: boolean) {
+        this.isEraser = isEraser;
+    }
+    toJSON(): PaintData {
+        let d = new PaintData();
+        d.lineWidth = this.lineWidth;
+        d.strokeStyle = this.StrokeStyle;
+        d.globalAlpha = this.globalAlpha;
+        d.isEraser = this.isEraser;
+        return d;
+    }
+    static fromJSON(data: PaintData): Paint {
+        return new Paint(data.lineWidth, data.strokeStyle, data.globalAlpha, data.isEraser);
+    }
+}
+export class PaintData {
+    lineWidth: number = 0;
+    strokeStyle: string = '';
+    globalAlpha: number = 1;
+    isEraser: boolean = false;
 }

@@ -1,0 +1,160 @@
+{
+  "float": [
+    {
+      "name": "tool_icon_size",
+      "value": "56vp"
+    },
+    {
+      "name": "tool_btn_width",
+      "value": "96vp"
+    },
+    {
+      "name": "tool_sub_icon_size",
+      "value": "28vp"
+    },
+    {
+      "name": "tool_icon_font",
+      "value": "26fp"
+    },
+    {
+      "name": "tool_label_font",
+      "value": "14fp"
+    },
+    {
+      "name": "tool_title_font",
+      "value": "18fp"
+    },
+    {
+      "name": "tool_small_font",
+      "value": "13fp"
+    },
+    {
+      "name": "tool_border_radius",
+      "value": "28vp"
+    },
+    {
+      "name": "tool_margin_top",
+      "value": "8vp"
+    },
+    {
+      "name": "tool_margin_top_label",
+      "value": "20vp"
+    },
+    {
+      "name": "tool_margin_bottom_label",
+      "value": "14vp"
+    },
+    {
+      "name": "small_icon_width",
+      "value": "32vp"
+    },
+    {
+      "name": "sync_indicator_size",
+      "value": "10vp"
+    },
+    {
+      "name": "sync_font",
+      "value": "14fp"
+    },
+    {
+      "name": "cursor_size",
+      "value": "14vp"
+    },
+    {
+      "name": "cursor_name_font",
+      "value": "12fp"
+    },
+    {
+      "name": "color_grid_width",
+      "value": "30vp"
+    },
+    {
+      "name": "color_grid_height",
+      "value": "24vp"
+    },
+    {
+      "name": "rgb_label_font",
+      "value": "14fp"
+    },
+    {
+      "name": "rgb_label_width",
+      "value": "20vp"
+    },
+    {
+      "name": "rgb_value_font",
+      "value": "13fp"
+    },
+    {
+      "name": "rgb_value_width",
+      "value": "32vp"
+    },
+    {
+      "name": "color_preview_size",
+      "value": "22vp"
+    },
+    {
+      "name": "color_preview_radius",
+      "value": "11vp"
+    },
+    {
+      "name": "text_area_height",
+      "value": "100vp"
+    },
+    {
+      "name": "text_area_font",
+      "value": "18fp"
+    },
+    {
+      "name": "font_list_item_font",
+      "value": "16fp"
+    },
+    {
+      "name": "font_list_item_height",
+      "value": "36vp"
+    },
+    {
+      "name": "font_list_height",
+      "value": "144vp"
+    },
+    {
+      "name": "font_list_width",
+      "value": "96vp"
+    },
+    {
+      "name": "bold_btn_width",
+      "value": "56vp"
+    },
+    {
+      "name": "bold_btn_height",
+      "value": "42vp"
+    },
+    {
+      "name": "bold_btn_radius",
+      "value": "10vp"
+    },
+    {
+      "name": "bold_btn_font",
+      "value": "20fp"
+    },
+    {
+      "name": "paint_width",
+      "value": "64vp"
+    },
+    {
+      "name": "paint_height",
+      "value": "58vp"
+    },
+    {
+      "name": "image_width",
+      "value": "28vp"
+    },
+    {
+      "name": "bottom",
+      "value": "6vp"
+    },
+    {
+      "name": "tool_bar_space",
+      "value": "8vp"
+    }
+  ]
+}

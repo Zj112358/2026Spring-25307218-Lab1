@@ -14,7 +14,8 @@
  */
 
 import { List } from '@kit.ArkTS';
-import DrawPath from './IDraw';
+import DrawPath, { ShapeDraw, TextDraw, DrawPathData,
+  TouchPointData, FountainPenPointData } from './IDraw';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { BusinessError } from '@kit.BasicServicesKit';
 
@@ -122,5 +123,71 @@ export default class DrawInvoker {
       }
     }
     return -1;
+  }
+
+  serializeAll(): string {
+    let items: DrawPathData[] = [];
+    for (let i = 0; i < this.drawPathList.length; i++) {
+      let element = this.drawPathList.get(i);
+      items.push(element.toJSON());
+    }
+    return JSON.stringify(items);
+  }
+
+  deserializeAll(json: string): void {
+    this.clear();
+    let rawItems = JSON.parse(json) as Array<Record<string, Object>>;
+    for (let i = 0; i < rawItems.length; i++) {
+      let raw = rawItems[i];
+      let type = raw['type'] as string;
+      let data = new DrawPathData();
+      let p = raw['paint'] as Record<string, Object>;
+      data.paint.lineWidth = p['lineWidth'] as number;
+      data.paint.strokeStyle = p['strokeStyle'] as string;
+      data.paint.globalAlpha = p['globalAlpha'] as number;
+      data.paint.isEraser = (p['isEraser'] as boolean) ?? false;
+      data.offsetX = raw['offsetX'] as number;
+      data.offsetY = raw['offsetY'] as number;
+      data.rotation = raw['rotation'] as number;
+      if (type === 'shapedraw') {
+        data.type = 'shapedraw';
+        data.shapeType = raw['shapeType'] as string;
+        data.startX = raw['startX'] as number;
+        data.startY = raw['startY'] as number;
+        data.endX = raw['endX'] as number;
+        data.endY = raw['endY'] as number;
+        this.add(ShapeDraw.fromJSON(data));
+      } else if (type === 'textdraw') {
+        data.type = 'textdraw';
+        data.text = raw['text'] as string;
+        data.x = raw['x'] as number;
+        data.y = raw['y'] as number;
+        data.fontSize = raw['fontSize'] as number;
+        data.fontWeight = raw['fontWeight'] as number;
+        data.fontStyle = raw['fontStyle'] as number;
+        this.add(TextDraw.fromJSON(data));
+      } else {
+        data.type = 'drawpath';
+        data.isFountainPen = raw['isFountainPen'] as boolean;
+        let ptsArr = raw['touchPoints'] as Array<Record<string, Object>>;
+        for (let j = 0; j < ptsArr.length; j++) {
+          let pt = ptsArr[j];
+          let tpd = new TouchPointData();
+          tpd.x = pt['x'] as number;
+          tpd.y = pt['y'] as number;
+          data.touchPoints.push(tpd);
+        }
+        let fpArr = raw['fountainPenPoints'] as Array<Record<string, Object>>;
+        for (let j = 0; j < fpArr.length; j++) {
+          let fpd = new FountainPenPointData();
+          let fp = fpArr[j];
+          fpd.x = fp['x'] as number;
+          fpd.y = fp['y'] as number;
+          fpd.velocity = fp['velocity'] as number;
+          data.fountainPenPoints.push(fpd);
+        }
+        this.add(DrawPath.fromJSON(data));
+      }
+    }
   }
 }

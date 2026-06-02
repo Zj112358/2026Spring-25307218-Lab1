@@ -80,8 +80,8 @@ export struct textInputSheet {
 
         TextArea({ text: this.textContent, placeholder: '请输入文字' })
           .width(CommonConstants.ONE_HUNDRED_PERCENT)
-          .height(80)
-          .fontSize(16)
+          .height($r('app.float.text_area_height'))
+          .fontSize($r('app.float.text_area_font'))
           .onChange((value: string) => {
             this.textContent = value;
           })
@@ -102,12 +102,12 @@ export struct textInputSheet {
           Column() {
             Row() {
               Image($r('sys.media.ohos_ic_public_arrow_up'))
-                .width(16)
-                .height(16)
+                .width($r('app.float.rgb_label_width'))
+                .height($r('app.float.rgb_label_width'))
                 .fillColor(Color.White)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
-            .height(28)
+            .height($r('app.float.rgb_value_width'))
             .justifyContent(FlexAlign.Center)
             .backgroundColor('#333333')
             .borderRadius({ topLeft: 6, topRight: 6 })
@@ -121,12 +121,12 @@ export struct textInputSheet {
                 ListItem() {
                   Row() {
                     Text(item.label)
-                      .fontSize(14)
+                      .fontSize($r('app.float.font_list_item_font'))
                       .fontColor(this.selectedFontIndex === index ? '#0A59F7' : Color.White)
                       .fontWeight(this.selectedFontIndex === index ? FontWeight.Bold : FontWeight.Normal)
                   }
                   .width(CommonConstants.ONE_HUNDRED_PERCENT)
-                  .height(30)
+                  .height($r('app.float.font_list_item_height'))
                   .justifyContent(FlexAlign.Center)
                   .backgroundColor(this.selectedFontIndex === index ? '#4D4D4D' : '#333333')
                   .onClick(() => {
@@ -137,19 +137,19 @@ export struct textInputSheet {
               }, (item: FontSizeItem, index: number) => `fontSize_${index}`)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
-            .height(120)
+            .height($r('app.float.font_list_height'))
             .backgroundColor('#333333')
             .scrollBar(BarState.Off)
             .edgeEffect(EdgeEffect.None)
 
             Row() {
               Image($r('sys.media.ohos_ic_public_arrow_down'))
-                .width(16)
-                .height(16)
+                .width($r('app.float.rgb_label_width'))
+                .height($r('app.float.rgb_label_width'))
                 .fillColor(Color.White)
             }
             .width(CommonConstants.ONE_HUNDRED_PERCENT)
-            .height(28)
+            .height($r('app.float.rgb_value_width'))
             .justifyContent(FlexAlign.Center)
             .backgroundColor('#333333')
             .borderRadius({ bottomLeft: 6, bottomRight: 6 })
@@ -158,24 +158,24 @@ export struct textInputSheet {
               this.scroller.scrollToIndex(idx);
             })
           }
-          .width(80)
+          .width($r('app.float.font_list_width'))
           .borderRadius(6)
           .clip(true)
 
           Column() {
             Stack() {
               Text()
-                .width(48)
-                .height(36)
-                .borderRadius(8)
+                .width($r('app.float.bold_btn_width'))
+                .height($r('app.float.bold_btn_height'))
+                .borderRadius($r('app.float.bold_btn_radius'))
                 .backgroundColor(this.textFontWeight === FontWeight.Bold ? $r('app.color.theme_color') : '#F1F3F5')
               Text('B')
-                .fontSize(18)
+                .fontSize($r('app.float.bold_btn_font'))
                 .fontWeight(FontWeight.Bold)
                 .fontColor(this.textFontWeight === FontWeight.Bold ? Color.White : Color.Black)
             }
-            .width(48)
-            .height(36)
+            .width($r('app.float.bold_btn_width'))
+            .height($r('app.float.bold_btn_height'))
             .onClick(() => {
               this.textFontWeight = this.textFontWeight === FontWeight.Bold ? FontWeight.Normal : FontWeight.Bold;
             })
@@ -185,17 +185,17 @@ export struct textInputSheet {
           Column() {
             Stack() {
               Text()
-                .width(48)
-                .height(36)
-                .borderRadius(8)
+                .width($r('app.float.bold_btn_width'))
+                .height($r('app.float.bold_btn_height'))
+                .borderRadius($r('app.float.bold_btn_radius'))
                 .backgroundColor(this.textFontStyle === FontStyle.Italic ? $r('app.color.theme_color') : '#F1F3F5')
               Text('I')
-                .fontSize(18)
+                .fontSize($r('app.float.bold_btn_font'))
                 .fontStyle(FontStyle.Italic)
                 .fontColor(this.textFontStyle === FontStyle.Italic ? Color.White : Color.Black)
             }
-            .width(48)
-            .height(36)
+            .width($r('app.float.bold_btn_width'))
+            .height($r('app.float.bold_btn_height'))
             .onClick(() => {
               this.textFontStyle = this.textFontStyle === FontStyle.Italic ? FontStyle.Normal : FontStyle.Italic;
             })
@@ -205,7 +205,7 @@ export struct textInputSheet {
           Text(FONT_SIZE_LIST[this.selectedFontIndex].size % 1 === 0 ?
             FONT_SIZE_LIST[this.selectedFontIndex].size.toFixed(0) :
             FONT_SIZE_LIST[this.selectedFontIndex].size.toString())
-            .fontSize(11)
+            .fontSize($r('app.float.rgb_value_font'))
             .fontColor($r('sys.color.mask_secondary'))
             .margin({ left: 8 })
         }
@@ -230,19 +230,19 @@ export struct textInputSheet {
           ForEach(CommonConstants.COLOR_GRAY_ROW, (item: string) => {
             Stack() {
               Text()
-                .width(26)
-                .height(20)
+                .width($r('app.float.color_grid_width'))
+                .height($r('app.float.color_grid_height'))
                 .backgroundColor(item)
               if (this.textColor === item) {
                 Text()
-                  .width(26)
-                  .height(20)
+                  .width($r('app.float.color_grid_width'))
+                  .height($r('app.float.color_grid_height'))
                   .borderWidth(2)
                   .borderColor(Color.White)
               }
             }
-            .width(26)
-            .height(20)
+            .width($r('app.float.color_grid_width'))
+            .height($r('app.float.color_grid_height'))
             .onClick(() => {
               this.textColor = item;
             })
@@ -255,19 +255,19 @@ export struct textInputSheet {
             ForEach(row, (item: string, colIndex: number) => {
               Stack() {
                 Text()
-                  .width(26)
-                  .height(20)
+                  .width($r('app.float.color_grid_width'))
+                  .height($r('app.float.color_grid_height'))
                   .backgroundColor(item)
                 if (this.textColor === item) {
                   Text()
-                    .width(26)
-                    .height(20)
+                    .width($r('app.float.color_grid_width'))
+                    .height($r('app.float.color_grid_height'))
                     .borderWidth(2)
                     .borderColor(Color.White)
                 }
               }
-              .width(26)
-              .height(20)
+              .width($r('app.float.color_grid_width'))
+              .height($r('app.float.color_grid_height'))
               .onClick(() => {
                 this.textColor = item;
               })

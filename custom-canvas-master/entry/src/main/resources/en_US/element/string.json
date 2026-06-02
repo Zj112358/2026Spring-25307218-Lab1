@@ -152,6 +152,22 @@
     {
       "name": "font_style_label",
       "value": "style"
+    },
+    {
+      "name": "syncing",
+      "value": "Syncing"
+    },
+    {
+      "name": "synced",
+      "value": "Synced"
+    },
+    {
+      "name": "version",
+      "value": "Version"
+    },
+    {
+      "name": "save",
+      "value": "Save"
     }
   ]
 }

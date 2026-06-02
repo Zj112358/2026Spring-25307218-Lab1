@@ -13,8 +13,41 @@
  * limitations under the License.
  */
 
-import Paint from './Paint';
+import Paint, { PaintData } from './Paint';
 import { FountainPenPoint } from './IBrush';
+
+export class TouchPointData {
+  x: number = 0;
+  y: number = 0;
+}
+
+export class FountainPenPointData {
+  x: number = 0;
+  y: number = 0;
+  velocity: number = 0;
+}
+
+export class DrawPathData {
+  type: string = 'drawpath';
+  paint: PaintData = new PaintData();
+  touchPoints: TouchPointData[] = [];
+  isFountainPen: boolean = false;
+  fountainPenPoints: FountainPenPointData[] = [];
+  offsetX: number = 0;
+  offsetY: number = 0;
+  rotation: number = 0;
+  shapeType: string = '';
+  startX: number = 0;
+  startY: number = 0;
+  endX: number = 0;
+  endY: number = 0;
+  text: string = '';
+  x: number = 0;
+  y: number = 0;
+  fontSize: number = 24;
+  fontWeight: number = 0;
+  fontStyle: number = 0;
+}
 
 export interface IDraw {
   draw(context: CanvasRenderingContext2D): void;
@@ -42,6 +75,7 @@ export default class DrawPath implements IDraw {
   public offsetX: number = 0;
   public offsetY: number = 0;
   public rotation: number = 0;
+  public touchPoints: TouchPointData[] = [];
   private _boundsMinX: number = 0;
   private _boundsMinY: number = 0;
   private _boundsMaxX: number = 0;
@@ -141,7 +175,16 @@ export default class DrawPath implements IDraw {
 
   draw(context: CanvasRenderingContext2D): void {
     this.applyTransform(context);
-    if (this.isFountainPen && this.fountainPenPoints.length > 1) {
+    if (this.paint.isEraser) {
+      let prevComposite = context.globalCompositeOperation;
+      context.globalCompositeOperation = 'destination-out';
+      context.lineWidth = this.paint.lineWidth;
+      context.strokeStyle = '#000000';
+      context.globalAlpha = 1;
+      context.lineCap = 'round';
+      context.stroke(this.path);
+      context.globalCompositeOperation = prevComposite;
+    } else if (this.isFountainPen && this.fountainPenPoints.length > 1) {
       this.drawFountainPen(context);
     } else {
       context.lineWidth = this.paint.lineWidth;
@@ -151,6 +194,64 @@ export default class DrawPath implements IDraw {
       context.stroke(this.path);
     }
     this.restoreTransform(context);
+  }
+
+  rebuildPath(): void {
+    this.path = new Path2D();
+    if (this.touchPoints.length === 0) {
+      return;
+    }
+    this.path.moveTo(this.touchPoints[0].x, this.touchPoints[0].y);
+    for (let i = 1; i < this.touchPoints.length; i++) {
+      this.path.lineTo(this.touchPoints[i].x, this.touchPoints[i].y);
+    }
+  }
+
+  toJSON(): DrawPathData {
+    let d = new DrawPathData();
+    d.paint = this.paint.toJSON();
+    d.isFountainPen = this.isFountainPen;
+    d.offsetX = this.offsetX;
+    d.offsetY = this.offsetY;
+    d.rotation = this.rotation;
+    for (let i = 0; i < this.touchPoints.length; i++) {
+      let tp = new TouchPointData();
+      tp.x = this.touchPoints[i].x;
+      tp.y = this.touchPoints[i].y;
+      d.touchPoints.push(tp);
+    }
+    for (let i = 0; i < this.fountainPenPoints.length; i++) {
+      let fp = new FountainPenPointData();
+      fp.x = this.fountainPenPoints[i].x;
+      fp.y = this.fountainPenPoints[i].y;
+      fp.velocity = this.fountainPenPoints[i].velocity;
+      d.fountainPenPoints.push(fp);
+    }
+    return d;
+  }
+
+  static fromJSON(data: DrawPathData): DrawPath {
+    let paint = Paint.fromJSON(data.paint);
+    let dp = new DrawPath(paint, new Path2D());
+    for (let i = 0; i < data.touchPoints.length; i++) {
+      let tp = new TouchPointData();
+      tp.x = data.touchPoints[i].x;
+      tp.y = data.touchPoints[i].y;
+      dp.touchPoints.push(tp);
+    }
+    dp.isFountainPen = data.isFountainPen;
+    for (let i = 0; i < data.fountainPenPoints.length; i++) {
+      let fp = data.fountainPenPoints[i];
+      dp.fountainPenPoints.push(new FountainPenPoint(fp.x, fp.y, fp.velocity));
+    }
+    dp.offsetX = data.offsetX;
+    dp.offsetY = data.offsetY;
+    dp.rotation = data.rotation;
+    dp.rebuildPath();
+    for (let i = 0; i < dp.touchPoints.length; i++) {
+      dp.updateBounds(dp.touchPoints[i].x, dp.touchPoints[i].y);
+    }
+    return dp;
   }
 
   private drawFountainPen(context: CanvasRenderingContext2D): void {
@@ -611,6 +712,30 @@ export class ShapeDraw extends DrawPath {
     }
     this.restoreTransform(context);
   }
+
+  toJSON(): DrawPathData {
+    let d = new DrawPathData();
+    d.type = 'shapedraw';
+    d.paint = this.paint.toJSON();
+    d.shapeType = this.shapeType;
+    d.startX = this.startX;
+    d.startY = this.startY;
+    d.endX = this.endX;
+    d.endY = this.endY;
+    d.offsetX = this.offsetX;
+    d.offsetY = this.offsetY;
+    d.rotation = this.rotation;
+    return d;
+  }
+
+  static fromJSON(data: DrawPathData): ShapeDraw {
+    let paint = Paint.fromJSON(data.paint);
+    let sd = new ShapeDraw(paint, data.shapeType, data.startX, data.startY, data.endX, data.endY);
+    sd.offsetX = data.offsetX;
+    sd.offsetY = data.offsetY;
+    sd.rotation = data.rotation;
+    return sd;
+  }
 }
 
 export class TextDraw extends DrawPath {
@@ -697,5 +822,31 @@ export class TextDraw extends DrawPath {
     }
     context.font = 'normal normal 14px sans-serif';
     this.restoreTransform(context);
+  }
+
+  toJSON(): DrawPathData {
+    let d = new DrawPathData();
+    d.type = 'textdraw';
+    d.paint = this.paint.toJSON();
+    d.text = this.text;
+    d.x = this.x;
+    d.y = this.y;
+    d.fontSize = this.fontSize;
+    d.fontWeight = this.fontWeight as number;
+    d.fontStyle = this.fontStyle as number;
+    d.offsetX = this.offsetX;
+    d.offsetY = this.offsetY;
+    d.rotation = this.rotation;
+    return d;
+  }
+
+  static fromJSON(data: DrawPathData): TextDraw {
+    let paint = Paint.fromJSON(data.paint);
+    let td = new TextDraw(paint, data.text, data.x, data.y, data.fontSize,
+      data.fontWeight as FontWeight, data.fontStyle as FontStyle);
+    td.offsetX = data.offsetX;
+    td.offsetY = data.offsetY;
+    td.rotation = data.rotation;
+    return td;
   }
 }
